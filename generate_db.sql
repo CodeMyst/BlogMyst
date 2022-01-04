@@ -75,6 +75,8 @@ create table blog_follow
     user_id int not null,
     blog_id int not null,
 
+    primary key (user_id, blog_id),
+
     constraint fk_blog_follow_user
         foreign key (user_id)
             references user (id),

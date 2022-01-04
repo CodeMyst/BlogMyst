@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+  <persistence-unit name="default">
+
+      <class>rs.myst.backend.model.Blog</class>
+      <class>rs.myst.backend.model.BlogFollow</class>
+      <class>rs.myst.backend.model.Comment</class>
+      <class>rs.myst.backend.model.Post</class>
+      <class>rs.myst.backend.model.Report</class>
+      <class>rs.myst.backend.model.User</class>
+      <properties>
+          <property name="hibernate.connection.url" value="jdbc:mariadb://localhost:3306/blogmyst"/>
+          <property name="hibernate.connection.driver_class" value="org.mariadb.jdbc.Driver"/>
+      </properties>
+  </persistence-unit>
+    <persistence-unit name="persistenceUnit"/>
+</persistence>

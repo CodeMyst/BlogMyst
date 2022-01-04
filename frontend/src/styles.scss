@@ -1,8 +1,35 @@
-article {
-    .post-heading {
-        h3 {
-            margin-bottom: 0;
-        }
+:root {
+    --nc-tx-1: #cccccc;
+	--nc-tx-2: #cccccc;
+	--nc-bg-1: #141414;
+	--nc-bg-2: #1f1f1f;
+	--nc-bg-3: #222222;
+	--nc-lk-1: #ee720d;
+    --nc-lk-2: #1eaedb;
+    --nc-lk-tx: #141414;
+    --nc-ac-1: #7928CA;
+    --nc-ac-tx: #cccccc;
+}
+
+header {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+form {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+
+    label {
+        grid-column: 1/ 2;
+    }
+
+    input, button {
+        grid-column: 2 / 3;;
     }
 }
 
+h1, h2, h3 {
+    padding-bottom: 1rem;
+    border-bottom: 3px solid var(--nc-bg-2);
+}

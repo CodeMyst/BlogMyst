@@ -4,7 +4,7 @@ create table user
 (
     id            int                           not null auto_increment primary key,
     username      varchar(20)                   not null,
-    role          enum ('admin', 'mod', 'user') not null,
+    role          enum ('ADMIN', 'MOD', 'USER') not null,
     password_hash tinytext                      not null,
     salt          tinytext                      not null
 );
@@ -59,7 +59,7 @@ create table report
 (
     id         int      not null auto_increment primary key,
     user_id    int      not null,
-    type       enum ('blog', 'post', 'comment'),
+    type       enum ('BLOG', 'POST', 'COMMENT'),
     date       datetime not null,
     reason     text,
 

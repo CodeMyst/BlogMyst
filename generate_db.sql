@@ -5,8 +5,7 @@ create table user
     id            int                           not null auto_increment primary key,
     username      varchar(20)                   not null,
     role          enum ('ADMIN', 'MOD', 'USER') not null,
-    password_hash tinytext                      not null,
-    salt          tinytext                      not null
+    password_hash tinytext                      not null
 );
 
 create table blog

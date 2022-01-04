@@ -24,10 +24,6 @@ public class User {
     @Column(name = "password_hash")
     private String passwordHash;
 
-    @Basic
-    @Column(name = "salt")
-    private String salt;
-
     @OneToMany(mappedBy = "author")
     private Collection<Blog> blogs;
 
@@ -72,25 +68,17 @@ public class User {
         this.passwordHash = passwordHash;
     }
 
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id && Objects.equals(username, user.username) && Objects.equals(role, user.role) && Objects.equals(passwordHash, user.passwordHash) && Objects.equals(salt, user.salt);
+        return id == user.id && Objects.equals(username, user.username) && Objects.equals(role, user.role) && Objects.equals(passwordHash, user.passwordHash);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, role, passwordHash, salt);
+        return Objects.hash(id, username, role, passwordHash);
     }
 
     public Collection<Blog> getBlogs() {

@@ -18,11 +18,16 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public void register(String username, String password) {
+    public void register(@RequestBody RegisterInfo info) {
         User user = new User();
-        user.setUsername(username);
-        user.setPasswordHash(passwordEncoder.encode(password));
+        user.setUsername(info.username);
+        user.setPasswordHash(passwordEncoder.encode(info.password));
         user.setRole(UserRole.USER);
         userRepo.save(user);
+    }
+
+    private static class RegisterInfo {
+        public String username;
+        public String password;
     }
 }

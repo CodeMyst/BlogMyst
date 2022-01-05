@@ -2,10 +2,10 @@
 
 <form>
     <label for="username">Username:</label>
-    <input type="text" id="username" name="username" placeholder="username" required>
+    <input type="text" id="username" name="username" placeholder="username" required />
 
     <label for="password">Password:</label>
-    <input type="password" id="password" name="password" placeholder="************" required>
+    <input type="password" id="password" name="password" placeholder="************" required />
 
     <button type="submit">Login</button>
 </form>
@@ -19,7 +19,6 @@
     form label {
         grid-column: 1/ 2;
     }
-
 
     form input,
     form button {

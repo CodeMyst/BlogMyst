@@ -1,0 +1,29 @@
+:root {
+    --nc-tx-1: #cccccc;
+    --nc-tx-2: #cccccc;
+    --nc-bg-1: #141414;
+    --nc-bg-2: #1f1f1f;
+    --nc-bg-3: #222222;
+    --nc-bg-4: #121212;
+    --nc-lk-1: #ee720d;
+    --nc-lk-2: #1eaedb;
+    --nc-lk-tx: #141414;
+    --nc-ac-1: #7928ca;
+    --nc-ac-tx: #cccccc;
+
+    --ff: "Ubuntu", sans-serif;
+}
+
+body {
+    font-family: var(--ff-sans);
+}
+
+header {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+h1, h2, h3 {
+    padding-bottom: 1rem;
+    border-bottom: 3px solid var(--nc-bg-2);
+}

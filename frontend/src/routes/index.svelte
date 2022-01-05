@@ -81,3 +81,35 @@
         <span><a href="#">[continue reading]</a></span>
     </article>
 </div>
+
+<style>
+    article {
+        padding: 1.5rem;
+        border: 3px dashed var(--nc-bg-2);
+        margin-bottom: 2rem;
+    }
+
+    .title {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        border-bottom: 3px dashed var(--nc-bg-2);
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+        align-items: center;
+    }
+
+    .title > a {
+        text-decoration: none;
+    }
+
+    .title h3 {
+        padding: 0;
+        border-bottom: none;
+    }
+
+    .title .meta small {
+        display: block;
+        text-align: right;
+    }
+</style>

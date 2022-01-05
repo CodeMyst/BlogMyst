@@ -9,3 +9,20 @@
 
     <button type="submit">Login</button>
 </form>
+
+<style>
+    form {
+        display: grid;
+        grid-template-columns: 100px 1fr;
+    }
+
+    form label {
+        grid-column: 1/ 2;
+    }
+
+
+    form input,
+    form button {
+        grid-column: 2 / 3;
+    }
+</style>

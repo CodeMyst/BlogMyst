@@ -1,39 +1,14 @@
 <h2>Create a new account</h2>
 
+<!-- TODO: form validation -->
+
 <form>
-    <label for="first-name">First Name:</label>
-    <input
-        type="text"
-        id="first-name"
-        name="first-name"
-        placeholder="First Name"
-        required
-    />
-
-    <label for="last-name">Last Name:</label>
-    <input
-        type="text"
-        id="last-name"
-        name="last-name"
-        placeholder="Last Name"
-        required
-    />
-
     <label for="username">Username:</label>
     <input
         type="text"
         id="username"
         name="username"
         placeholder="username"
-        required
-    />
-
-    <label for="email">Email:</label>
-    <input
-        type="email"
-        id="email"
-        name="email"
-        placeholder="user@example.com"
         required
     />
 
@@ -57,3 +32,21 @@
 
     <button type="submit">Register</button>
 </form>
+
+
+<style>
+    form {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+    }
+
+    form label {
+        grid-column: 1/ 2;
+    }
+
+
+    form input,
+    form button {
+        grid-column: 2 / 3;
+    }
+</style>

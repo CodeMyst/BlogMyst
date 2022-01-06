@@ -6,6 +6,8 @@
 
     let error: boolean = false;
 
+    let usernameTaken: boolean = false;
+
     let success: boolean = false;
 
     const onSubmit = async () => {
@@ -14,7 +16,7 @@
             password: password
         };
 
-        const res = await fetch("http://localhost:8080/users/register", {
+        const res = await fetch("http://localhost:8080/register", {
             method: "POST",
             mode: "cors",
             headers: {
@@ -25,6 +27,8 @@
 
         error = !res.ok;
         success = res.ok;
+
+        usernameTaken = res.status === 400;
 
         if (success) {
             form.reset();
@@ -42,9 +46,15 @@
     </div>
 {/if}
 
-{#if error}
+{#if error && !usernameTaken}
     <div class="error">
         Something went wrong.
+    </div>
+{/if}
+
+{#if usernameTaken}
+    <div class="error">
+        Username is already taken.
     </div>
 {/if}
 

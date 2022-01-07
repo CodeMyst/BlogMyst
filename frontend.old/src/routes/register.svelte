@@ -36,6 +36,10 @@
     };
 </script>
 
+<svelte:head>
+    <title>BlogMyst | Register</title>
+</svelte:head>
+
 <h2>Create a new account</h2>
 
 <!-- TODO: form validation (pass and confirm must match) -->

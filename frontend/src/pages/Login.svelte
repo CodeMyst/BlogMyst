@@ -1,41 +1,22 @@
 <script lang="ts">
-    import { goto } from "$app/navigation";
+    import { AuthResult, login } from "../auth";
 
     let username: string;
     let password: string;
 
-    let error: boolean = false;
+    let authRes: AuthResult | null = null;
 
     const onSubmit = async () => {
-        const data = {
-            username: username,
-            password: password
-        };
+        authRes = await login(username, password);
 
-        const res = await fetch("http://localhost:8080/login", {
-            method: "POST",
-            mode: "cors",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            credentials: "include",
-            body: JSON.stringify(data)
-        });
-
-        error = !res.ok;
-
-        if (res.ok) {
-            await goto("/");
-        }
+        if (authRes.success) window.location.href = "/";
     };
 </script>
 
 <h2>Login</h2>
 
-{#if error}
-    <div class="error">
-        Wrong username and/or password.
-    </div>
+{#if authRes && !authRes.success}
+    <div class="error">{authRes.message}</div>
 {/if}
 
 <form on:submit|preventDefault={onSubmit}>

@@ -25,7 +25,7 @@
         background-color: var(--nc-bg-4);
     }
 
-    nav {
+    nav  {
         display: flex;
         flex-direction: row;
         justify-content: space-between;

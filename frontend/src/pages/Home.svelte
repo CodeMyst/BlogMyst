@@ -2,12 +2,12 @@
     <article>
         <div class="post-heading">
             <div class="title">
-                <a href="#"><h3>Example post</h3></a>
+                <a href="/"><h3>Example post</h3></a>
                 <div class="meta">
                     <small class="date">Published on 4. Jan 2022</small>
                     <small class="posted-by">
-                        by <a href="#">CodeMyst</a> in
-                        <a href="#">CodeMyst's Blog</a>
+                        by <a href="/">CodeMyst</a> in
+                        <a href="/">CodeMyst's Blog</a>
                     </small>
                 </div>
             </div>
@@ -37,18 +37,18 @@
             </p>
         </div>
 
-        <span><a href="#">[continue reading]</a></span>
+        <span><a href="/">[continue reading]</a></span>
     </article>
 
     <article>
         <div class="post-heading">
             <div class="title">
-                <a href="#"><h3>Example post</h3></a>
+                <a href="/"><h3>Example post</h3></a>
                 <div class="meta">
                     <small class="date">Published on 4. Jan 2022</small>
                     <small class="posted-by">
-                        by <a href="#">CodeMyst</a> in
-                        <a href="#">CodeMyst's Blog</a>
+                        by <a href="/">CodeMyst</a> in
+                        <a href="/">CodeMyst's Blog</a>
                     </small>
                 </div>
             </div>
@@ -78,7 +78,7 @@
             </p>
         </div>
 
-        <span><a href="#">[continue reading]</a></span>
+        <span><a href="/">[continue reading]</a></span>
     </article>
 </div>
 

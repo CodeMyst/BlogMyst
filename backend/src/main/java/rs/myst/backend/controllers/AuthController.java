@@ -8,6 +8,8 @@ import rs.myst.backend.model.User;
 import rs.myst.backend.model.UserRole;
 import rs.myst.backend.repositories.UserRepository;
 
+import java.security.Principal;
+
 @RestController
 public class AuthController {
     private final UserRepository userRepo;
@@ -20,7 +22,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public void register(@RequestBody RegisterInfo info) {
-        if (userRepo.findByUsername(info.username) != null) {
+        if (userRepo.existsByUsername(info.username)) {
             // already exists a user with the same username
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with the provided username already exists.");
         }
@@ -30,6 +32,11 @@ public class AuthController {
         user.setPasswordHash(passwordEncoder.encode(info.password));
         user.setRole(UserRole.USER);
         userRepo.save(user);
+    }
+
+    @GetMapping("/username")
+    public String getUsername(Principal principal) {
+        return principal.getName();
     }
 
     private static class RegisterInfo {

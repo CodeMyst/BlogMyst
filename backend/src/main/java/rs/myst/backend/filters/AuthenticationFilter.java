@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Key;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.stream.Collectors;
@@ -67,7 +68,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
         ResponseCookie c = ResponseCookie.from("blogmyst", token)
                 .httpOnly(true)
-                .maxAge(SecurityConstants.EXPIRATION_TIME)
+                .maxAge(Duration.ofMillis(SecurityConstants.EXPIRATION_TIME))
                 .sameSite("lax")
                 .build();
 

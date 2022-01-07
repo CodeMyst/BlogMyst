@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "blogmyst.jwtCookieName",
+      "type": "java.lang.String",
+      "description": "Description for blogmyst.jwtCookieName."
+    },
+    {
+      "name": "blogmyst.jwtSecret",
+      "type": "java.lang.String",
+      "description": "Description for blogmyst.jwtSecret."
+    },
+    {
+      "name": "blogmyst.jwtExpirationMs",
+      "type": "java.lang.String",
+      "description": "Description for blogmyst.jwtExpirationMs."
+    }
+  ]
+}

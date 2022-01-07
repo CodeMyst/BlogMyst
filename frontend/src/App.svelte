@@ -6,6 +6,8 @@
     import Home from "./pages/Home.svelte";
     import Login from "./pages/Login.svelte";
     import Register from "./pages/Register.svelte";
+    import { onMount } from "svelte";
+    import { getUsername, isLoggedIn } from "./auth";
 
     let page: any;
 
@@ -15,7 +17,15 @@
 
     router.start();
 
-    const username: string | null = null;
+    let username: string | null = null;
+
+    onMount(async () => {
+        const loggedIn = await isLoggedIn();
+
+        if (loggedIn) {
+            username = await getUsername();
+        }
+    });
 </script>
 
 <main>

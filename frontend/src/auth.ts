@@ -1,6 +1,4 @@
-import cookie from "cookie";
-
-const API_BASE = "http://localhost:8080";
+const API_BASE = "http://localhost:8080/api";
 
 export interface AuthResult {
     success: boolean;
@@ -13,7 +11,7 @@ export const register = async (username: string, password: string): Promise<Auth
         password: password
     };
 
-    const res = await fetch(`${API_BASE}/register`, {
+    const res = await fetch(`${API_BASE}/auth/register`, {
         method: "POST",
         mode: "cors",
         headers: {
@@ -23,13 +21,10 @@ export const register = async (username: string, password: string): Promise<Auth
     });
 
     const success = res.ok;
-    const usernameTaken = res.status === 400;
 
     let msg = "";
-
     if (!success) {
-        if (usernameTaken) msg = "Username is already taken.";
-        else msg = "There's an issue with the backend. Try again.";
+        msg = (await res.json()).message;
     }
 
     return {
@@ -44,7 +39,7 @@ export const login = async (username: string, password: string): Promise<AuthRes
         password: password
     };
 
-    const res = await fetch(`${API_BASE}/login`, {
+    const res = await fetch(`${API_BASE}/auth/login`, {
         method: "POST",
         mode: "cors",
         headers: {
@@ -66,6 +61,39 @@ export const login = async (username: string, password: string): Promise<AuthRes
     };
 };
 
+export const logout = async () => {
+    const res = await fetch(`${API_BASE}/auth/logout`, {
+        method: "POST",
+        mode: "cors",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "include"
+    });
+};
+
 export const isLoggedIn = async (): Promise<boolean> => {
-    return false;
+    const res = await fetch(`${API_BASE}/auth/username`, {
+        method: "GET",
+        mode: "cors",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "include"
+    });
+
+    return res.ok;
+};
+
+export const getUsername = async (): Promise<string> => {
+    const res = await fetch(`${API_BASE}/auth/username`, {
+        method: "GET",
+        mode: "cors",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "include"
+    });
+
+    return (await res.json()).username;
 };

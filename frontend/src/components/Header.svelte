@@ -1,5 +1,12 @@
 <script lang="ts">
+    import { logout } from "../auth";
+
     export let username: string | null;
+
+    const onLogout = async () => {
+        await logout();
+        window.location.href = "/";
+    };
 </script>
 
 <header>
@@ -11,7 +18,7 @@
         <ul>
             {#if username}
                 <li><a href="/users/{username}">{username}</a></li>
-                <li><a href="/logout">Logout</a></li>
+                <li><a href="/" on:click={onLogout}>Logout</a></li>
             {:else}
                 <li><a href="/login">Login</a></li>
                 <li><a href="/register">Register</a></li>

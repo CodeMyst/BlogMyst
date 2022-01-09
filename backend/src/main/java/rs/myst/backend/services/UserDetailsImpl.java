@@ -10,14 +10,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-public record UserDetailsImpl(int id, String username, @JsonIgnore String password,
+public record UserDetailsImpl(String username, @JsonIgnore String password,
                               GrantedAuthority authority) implements UserDetails {
 
     public static UserDetailsImpl build(User user) {
         GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().toString());
 
         return new UserDetailsImpl(
-                user.getId(),
                 user.getUsername(),
                 user.getPasswordHash(),
                 authority
@@ -27,10 +26,6 @@ public record UserDetailsImpl(int id, String username, @JsonIgnore String passwo
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(authority);
-    }
-
-    public int getId() {
-        return id;
     }
 
     @Override
@@ -68,11 +63,11 @@ public record UserDetailsImpl(int id, String username, @JsonIgnore String passwo
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserDetailsImpl that = (UserDetailsImpl) o;
-        return id == that.id && username.equals(that.username) && password.equals(that.password) && authority.equals(that.authority);
+        return username.equals(that.username) && password.equals(that.password) && authority.equals(that.authority);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password, authority);
+        return Objects.hash(username, password, authority);
     }
 }

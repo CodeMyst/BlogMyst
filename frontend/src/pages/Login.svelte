@@ -16,7 +16,7 @@
 <h2>Login</h2>
 
 {#if authRes && !authRes.success}
-    <div class="error">{authRes.message}</div>
+    <div class="status-message error">{authRes.message}</div>
 {/if}
 
 <form on:submit|preventDefault={onSubmit}>
@@ -42,12 +42,5 @@
     form input,
     form button {
         grid-column: 2 / 3;
-    }
-
-    .error {
-        padding-left: 1rem;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-        border-left: 5px solid var(--nc-red);
     }
 </style>

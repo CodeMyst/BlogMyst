@@ -59,7 +59,7 @@ public class AuthController {
         String role = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).findFirst().orElseThrow();
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookies.toString())
-                .body(new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), role));
+                .body(new UserInfoResponse(userDetails.getUsername(), role));
     }
 
     @PostMapping("/register")

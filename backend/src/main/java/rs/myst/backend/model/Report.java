@@ -29,7 +29,7 @@ public class Report {
     private int subjectId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "user_username", referencedColumnName = "username", nullable = false)
     private User user;
 
     public int getId() {

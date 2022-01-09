@@ -8,12 +8,12 @@ import javax.persistence.*;
 public class BlogFollow {
     @ManyToOne
     @Id
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "user_username", referencedColumnName = "username", nullable = false)
     private User user;
 
     @ManyToOne
     @Id
-    @JoinColumn(name = "blog_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "blog_url", referencedColumnName = "url", nullable = false)
     private Blog blog;
 
     public User getUser() {

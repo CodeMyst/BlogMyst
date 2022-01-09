@@ -6,12 +6,7 @@ import java.util.Objects;
 
 @Entity
 public class User {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "id")
-    private int id;
-
-    @Basic
     @Column(name = "username")
     private String username;
 
@@ -35,14 +30,6 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Collection<Report> reports;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getUsername() {
         return username;
@@ -73,12 +60,12 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id && Objects.equals(username, user.username) && Objects.equals(role, user.role) && Objects.equals(passwordHash, user.passwordHash);
+        return Objects.equals(username, user.username) && Objects.equals(role, user.role) && Objects.equals(passwordHash, user.passwordHash);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, role, passwordHash);
+        return Objects.hash(username, role, passwordHash);
     }
 
     public Collection<Blog> getBlogs() {

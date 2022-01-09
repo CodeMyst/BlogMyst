@@ -18,6 +18,8 @@
         <ul>
             {#if username}
                 <li><a href="/users/{username}">{username}</a></li>
+                <!-- TODO: just a temporary place for a new blog link -->
+                <li><a href="/new/blog">Create a new Blog</a></li>
                 <li><a href="/" on:click={onLogout}>Logout</a></li>
             {:else}
                 <li><a href="/login">Login</a></li>

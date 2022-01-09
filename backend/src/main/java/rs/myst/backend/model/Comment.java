@@ -24,11 +24,11 @@ public class Comment {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "author_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "author_username", referencedColumnName = "username", nullable = false)
     private User author;
 
     @ManyToOne
-    @JoinColumn(name = "post_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "post_url", referencedColumnName = "url", nullable = false)
     private Post post;
 
     public int getId() {

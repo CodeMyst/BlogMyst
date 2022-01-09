@@ -1,5 +1,7 @@
 package rs.myst.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -7,10 +9,9 @@ import java.util.Objects;
 
 @Entity
 public class Post {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "id")
-    private int id;
+    @Column(name = "url")
+    private String url;
 
     @Basic
     @Column(name = "created_at")
@@ -40,16 +41,8 @@ public class Post {
     private Collection<Comment> comments;
 
     @ManyToOne
-    @JoinColumn(name = "blog_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "blog_url", referencedColumnName = "url", nullable = false)
     private Blog blog;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public Timestamp getCreatedAt() {
         return createdAt;
@@ -104,14 +97,15 @@ public class Post {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Post post = (Post) o;
-        return id == post.id && upvotes == post.upvotes && downvotes == post.downvotes && Objects.equals(createdAt, post.createdAt) && Objects.equals(lastEdit, post.lastEdit) && Objects.equals(title, post.title) && Objects.equals(content, post.content);
+        return upvotes == post.upvotes && downvotes == post.downvotes && Objects.equals(createdAt, post.createdAt) && Objects.equals(lastEdit, post.lastEdit) && Objects.equals(title, post.title) && Objects.equals(content, post.content) && Objects.equals(url, post.url);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, createdAt, lastEdit, title, content, upvotes, downvotes);
+        return Objects.hash(url, createdAt, lastEdit, title, content, upvotes, downvotes);
     }
 
+    @JsonManagedReference
     public Collection<Comment> getComments() {
         return comments;
     }
@@ -126,5 +120,13 @@ public class Post {
 
     public void setBlog(Blog blog) {
         this.blog = blog;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

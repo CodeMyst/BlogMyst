@@ -26,11 +26,11 @@
 
 {#if authRes}
     {#if authRes.success}
-        <div class="success">
+        <div class="status-message success">
             Successfully created the account. You can now <a href="/login">login</a>.
         </div>
     {:else}
-        <div class="error">
+        <div class="status-message error">
             {authRes.message}
         </div>
     {/if}
@@ -89,17 +89,5 @@
     form input,
     form button {
         grid-column: 2 / 3;
-    }
-
-    .success,
-    .error {
-        padding-left: 1rem;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-        border-left: 5px solid var(--nc-green);
-    }
-
-    .error {
-        border-color: var(--nc-red);
     }
 </style>

@@ -8,12 +8,15 @@
     import Register from "./pages/Register.svelte";
     import { onMount } from "svelte";
     import { getUsername, isLoggedIn } from "./auth";
+    import CreateBlog from "./pages/Blog/CreateBlog.svelte";
 
     let page: any;
 
     router("/", () => (page = Home));
     router("/login", () => (page = Login));
     router("/register", () => (page = Register));
+
+    router("/new/blog", () => (page = CreateBlog));
 
     router.start();
 

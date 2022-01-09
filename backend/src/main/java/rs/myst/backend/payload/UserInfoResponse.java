@@ -1,22 +1,12 @@
 package rs.myst.backend.payload;
 
 public class UserInfoResponse {
-    private int id;
     private String username;
     private String role;
 
-    public UserInfoResponse(int id, String username, String role) {
-        this.id = id;
+    public UserInfoResponse(String username, String role) {
         this.username = username;
         this.role = role;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getUsername() {

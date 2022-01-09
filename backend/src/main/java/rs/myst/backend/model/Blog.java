@@ -1,15 +1,17 @@
 package rs.myst.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Objects;
 
 @Entity
 public class Blog {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "id")
-    private int id;
+    @Column(name = "url")
+    private String url;
 
     @Basic
     @Column(name = "name")
@@ -20,7 +22,7 @@ public class Blog {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "author_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "author_username", referencedColumnName = "username", nullable = false)
     private User author;
 
     @OneToMany(mappedBy = "blog")
@@ -28,14 +30,6 @@ public class Blog {
 
     @OneToMany(mappedBy = "blog")
     private Collection<Post> posts;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -58,14 +52,15 @@ public class Blog {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Blog blog = (Blog) o;
-        return id == blog.id && Objects.equals(name, blog.name) && Objects.equals(description, blog.description);
+        return Objects.equals(name, blog.name) && Objects.equals(description, blog.description) && Objects.equals(url, blog.url);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description);
+        return Objects.hash(name, url, description);
     }
 
+    @JsonBackReference
     public User getAuthor() {
         return author;
     }
@@ -74,6 +69,7 @@ public class Blog {
         this.author = author;
     }
 
+    @JsonManagedReference
     public Collection<BlogFollow> getFollows() {
         return follows;
     }
@@ -82,11 +78,20 @@ public class Blog {
         this.follows = follows;
     }
 
+    @JsonManagedReference
     public Collection<Post> getPosts() {
         return posts;
     }
 
     public void setPosts(Collection<Post> posts) {
         this.posts = posts;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

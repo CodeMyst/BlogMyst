@@ -32,3 +32,18 @@ h3 {
     padding-bottom: 1rem;
     border-bottom: 3px solid var(--nc-bg-2);
 }
+
+.status-message {
+    padding-left: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border-left: 5px solid transparent;
+}
+
+.status-message.success {
+    border-color: var(--nc-green);
+}
+
+.status-message.error {
+    border-color: var(--nc-red);
+}

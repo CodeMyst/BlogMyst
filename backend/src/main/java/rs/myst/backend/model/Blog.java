@@ -78,7 +78,7 @@ public class Blog {
         this.follows = follows;
     }
 
-    @JsonManagedReference
+    @JsonBackReference
     public Collection<Post> getPosts() {
         return posts;
     }

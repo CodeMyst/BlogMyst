@@ -112,4 +112,15 @@ public class BlogController {
     public ResponseEntity<?> getBlogs(@PathVariable("author") String author) {
         return ResponseEntity.ok(blogRepository.findByAuthorUsername(author));
     }
+
+    @GetMapping("/{author}/{blog}/{post}")
+    public ResponseEntity<?> getPost(@PathVariable("author") String ignoredAuthor, @PathVariable("blog") String blog, @PathVariable("post") String post) {
+        Optional<Post> res = postRepository.findByUrlAndBlogUrl(post, blog);
+
+        if (res.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(res);
+    }
 }

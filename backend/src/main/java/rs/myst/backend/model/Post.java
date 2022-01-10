@@ -115,7 +115,7 @@ public class Post {
         this.comments = comments;
     }
 
-    @JsonBackReference
+    @JsonManagedReference
     public Blog getBlog() {
         return blog;
     }

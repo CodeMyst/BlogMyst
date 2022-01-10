@@ -1,3 +1,4 @@
+import type Post__SvelteComponent_ from "../pages/Post/Post.svelte";
 import { API_BASE } from "./api";
 
 export interface BlogCreateResult {
@@ -135,4 +136,19 @@ export const createPost = async (author: string, blogUrl: string, title: string,
             url: ""
         };
     }
+};
+
+export const getPost = async (author: string, blogUrl: string, postUrl: string): Promise<Post | null> => {
+    const res = await fetch(`${API_BASE}/blog/~${author}/${blogUrl}/${postUrl}`, {
+        method: "GET",
+        mode: "cors",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "include"
+    });
+
+    if (!res.ok) return null;
+
+    return await res.json();
 };

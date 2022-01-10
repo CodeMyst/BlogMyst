@@ -47,3 +47,83 @@ h3 {
 .status-message.error {
     border-color: var(--nc-red);
 }
+
+.EasyMDEContainer {
+    background-color: var(--nc-bg-3);
+}
+
+.EasyMDEContainer .editor-toolbar,
+.EasyMDEContainer .editor-toolbar.fullscreen {
+    border: 2px solid var(--nc-tx-1);
+    border-bottom: none;
+    border-radius: 0;
+    padding: 0.5rem 1rem;
+    background-color: var(--nc-bg-3);
+}
+
+.EasyMDEContainer .editor-toolbar i.separator,
+.EasyMDEContainer .editor-toolbar.fullscreen i.separator {
+    border-color: var(--nc-tx-1);
+}
+
+.EasyMDEContainer .editor-toolbar button,
+.EasyMDEContainer .editor-toolbar.fullscreen button {
+    color: var(--nc-tx-1);
+}
+
+.EasyMDEContainer .editor-toolbar button:hover,
+.EasyMDEContainer .editor-toolbar button.active {
+    color: var(--nc-bg-3);
+}
+
+.EasyMDEContainer .CodeMirror,
+.EasyMDEContainer .CodeMirror-fullscreen {
+    background-color: var(--nc-bg-3) !important;
+    border: 2px solid var(--nc-tx-1) !important;
+    border-radius: 0 !important;
+    color: var(--nc-tx-1);
+}
+
+.EasyMDEContainer .CodeMirror-cursor {
+    border-color: var(--nc-tx-1);
+}
+
+.EasyMDEContainer .cm-spell-error {
+    background-color: transparent !important;
+    border-bottom: 1px solid var(--nc-red);
+}
+
+.EasyMDEContainer .editor-statusbar {
+    color: var(--nc-tx-1);
+    border: 2px solid var(--nc-tx-1);
+    border-top: none;
+}
+
+.EasyMDEContainer .editor-preview,
+.EasyMDEContainer .editor-preview-side {
+    background-color: var(--nc-bg-3);
+    border: 2px solid var(--nc-tx-1) !important;
+}
+
+.EasyMDEContainer .CodeMirror-selected {
+    background-color: var(--nc-bg-1) !important;
+}
+
+.EasyMDEContainer .editor-preview h1,
+.EasyMDEContainer .editor-preview h2,
+.EasyMDEContainer .editor-preview h3,
+.EasyMDEContainer .editor-preview-side h1,
+.EasyMDEContainer .editor-preview-side h2,
+.EasyMDEContainer .editor-preview-side h3 {
+    border-bottom: none;
+}
+
+.EasyMDEContainer .editor-preview pre,
+.EasyMDEContainer .editor-preview-side pre {
+    background-color: var(--nc-bg-1) !important;
+    border-radius: 0;
+}
+
+.EasyMDEContainer .cm-link {
+    color: var(--nc-lk-1) !important;
+}

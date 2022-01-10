@@ -10,6 +10,7 @@
     import { getUsername, isLoggedIn } from "./api/auth";
     import CreateBlog from "./pages/Blog/CreateBlog.svelte";
     import Blog from "./pages/Blog/Blog.svelte";
+    import CreatePost from "./pages/Post/CreatePost.svelte";
 
     let page: any;
     let params: any;
@@ -27,6 +28,8 @@
         },
         () => (page = Blog)
     );
+
+    router("/new/post", () => (page = CreatePost));
 
     router.start();
 

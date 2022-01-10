@@ -6,6 +6,12 @@ export interface BlogCreateResult {
     url: string;
 }
 
+export interface Blog {
+    url: string;
+    name: string;
+    description: string;
+}
+
 export const createBlog = async (name: string, description: string): Promise<BlogCreateResult> => {
     const data = {
         name: name,
@@ -43,4 +49,19 @@ export const createBlog = async (name: string, description: string): Promise<Blo
             url: ""
         };
     }
+};
+
+export const getBlog = async (author: string, url: string): Promise<Blog | null> => {
+    const res = await fetch(`${API_BASE}/blog/${author}/${url}`, {
+        method: "GET",
+        mode: "cors",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "include"
+    });
+
+    if (!res.ok) return null;
+
+    return await res.json();
 };

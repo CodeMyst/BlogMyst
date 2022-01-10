@@ -1,8 +1,7 @@
 <script lang="ts">
-import { onMount } from "svelte";
-import { getUsername } from "../../auth";
-
-    import { BlogCreateResult, createBlog } from "../../blog";
+    import { onMount } from "svelte";
+    import { getUsername } from "../../api/auth";
+    import { BlogCreateResult, createBlog } from "../../api/blog";
 
     let currentUsername: string;
 
@@ -24,7 +23,9 @@ import { getUsername } from "../../auth";
 
 {#if res && res.success}
     <div class="status-message success">
-        Successfully created the blog. You can view it at: <a href="/~{currentUsername}/{res.url}">/~{currentUsername}/{res.url}</a>
+        Successfully created the blog. You can view it at: <a href="/~{currentUsername}/{res.url}"
+            >/~{currentUsername}/{res.url}</a
+        >
     </div>
 {:else if res && !res.success}
     <div class="status-message error">

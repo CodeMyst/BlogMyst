@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { logout } from "../auth";
+    import { logout } from "../api/auth";
 
     export let username: string | null;
 

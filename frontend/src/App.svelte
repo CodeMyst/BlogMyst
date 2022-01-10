@@ -7,16 +7,26 @@
     import Login from "./pages/Login.svelte";
     import Register from "./pages/Register.svelte";
     import { onMount } from "svelte";
-    import { getUsername, isLoggedIn } from "./auth";
+    import { getUsername, isLoggedIn } from "./api/auth";
     import CreateBlog from "./pages/Blog/CreateBlog.svelte";
+    import Blog from "./pages/Blog/Blog.svelte";
 
     let page: any;
+    let params: any;
 
     router("/", () => (page = Home));
     router("/login", () => (page = Login));
     router("/register", () => (page = Register));
 
     router("/new/blog", () => (page = CreateBlog));
+    router(
+        "/~:author/:blog",
+        (ctx, next) => {
+            params = ctx.params;
+            next();
+        },
+        () => (page = Blog)
+    );
 
     router.start();
 
@@ -34,7 +44,7 @@
 <main>
     <Header {username} />
 
-    <svelte:component this={page} />
+    <svelte:component this={page} {params} />
 
     <Footer />
 </main>

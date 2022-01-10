@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { AuthResult, login } from "../auth";
+    import { AuthResult, login } from "../api/auth";
 
     let username: string;
     let password: string;

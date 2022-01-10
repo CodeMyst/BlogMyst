@@ -5,10 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import rs.myst.backend.constants.AuthConstants;
 import rs.myst.backend.model.Blog;
 import rs.myst.backend.model.User;
@@ -19,6 +16,7 @@ import rs.myst.backend.repositories.UserRepository;
 import rs.myst.backend.services.UserDetailsImpl;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/blog")
@@ -52,5 +50,16 @@ public class BlogController {
         blog.setUrl(url);
 
         return new ResponseEntity<>(blogRepository.save(blog), HttpStatus.OK);
+    }
+
+    @GetMapping("/{author}/{url}")
+    public ResponseEntity<?> getBlog(@PathVariable("author") String author, @PathVariable("url") String url) {
+        Optional<Blog> blog = blogRepository.findByUrlAndAuthorUsername(url, author);
+
+        if (blog.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return new ResponseEntity<>(blog.get(), HttpStatus.OK);
     }
 }

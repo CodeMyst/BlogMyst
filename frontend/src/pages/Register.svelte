@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { AuthResult, register } from "../auth";
+    import { AuthResult, register } from "../api/auth";
 
     let form: HTMLFormElement;
 

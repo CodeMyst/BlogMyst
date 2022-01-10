@@ -62,4 +62,9 @@ public class BlogController {
 
         return new ResponseEntity<>(blog.get(), HttpStatus.OK);
     }
+
+    @GetMapping("/{author}")
+    public ResponseEntity<?> getBlogs(@PathVariable("author") String author) {
+        return ResponseEntity.ok(blogRepository.findByAuthorUsername(author));
+    }
 }

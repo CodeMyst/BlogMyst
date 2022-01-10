@@ -65,3 +65,18 @@ export const getBlog = async (author: string, url: string): Promise<Blog | null>
 
     return await res.json();
 };
+
+export const getBlogs = async (author: string): Promise<Blog[]> => {
+    const res = await fetch(`${API_BASE}/blog/${author}`, {
+        method: "GET",
+        mode: "cors",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "include"
+    });
+
+    if (!res.ok) return null;
+
+    return await res.json();
+};

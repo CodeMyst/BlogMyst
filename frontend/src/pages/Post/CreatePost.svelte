@@ -3,9 +3,17 @@
 </script>
 
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { onMount, tick } from "svelte";
+    import { getUsername } from "../../api/auth";
+    import { Blog, getBlogs } from "../../api/blog";
 
-    onMount(() => {
+    let blogs: Blog[];
+
+    onMount(async () => {
+        blogs = await getBlogs(await getUsername());
+
+        await tick();
+
         new EasyMDE({
             autofocus: true,
             placeholder: "Insert your content here...",
@@ -16,9 +24,22 @@
 
 <h2>Create a new Post</h2>
 
-<textarea />
+{#if blogs === undefined || blogs.length === 0}
+    <p>You have no blogs. Create one <a href="/new/blog">here</a>.</p>
+{:else}
+    <form>
+        <label for="blog">Blog to publish in:</label>
+        <select name="blog" id="blog">
+            {#each blogs as blog}
+                <option value={blog.url}>{blog.name}</option>
+            {/each}
+        </select>
 
-<button type="submit">Publish</button>
+        <textarea />
+
+        <button type="submit">Publish</button>
+    </form>
+{/if}
 
 <style>
     h2 {

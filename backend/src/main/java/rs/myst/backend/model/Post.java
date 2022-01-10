@@ -1,5 +1,6 @@
 package rs.myst.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -114,6 +115,7 @@ public class Post {
         this.comments = comments;
     }
 
+    @JsonBackReference
     public Blog getBlog() {
         return blog;
     }

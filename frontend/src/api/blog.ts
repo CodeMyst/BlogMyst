@@ -6,10 +6,27 @@ export interface BlogCreateResult {
     url: string;
 }
 
+export interface PostCreateResult {
+    success: boolean;
+    message: string;
+    url: string;
+}
+
 export interface Blog {
     url: string;
     name: string;
     description: string;
+}
+
+export interface Post {
+    url: string;
+    title: string;
+    content: string;
+    blog: Blog;
+    createdAt: Date;
+    lastEdit: Date;
+    upvotes: number;
+    downvotes: number;
 }
 
 export const createBlog = async (name: string, description: string): Promise<BlogCreateResult> => {
@@ -79,4 +96,43 @@ export const getBlogs = async (author: string): Promise<Blog[]> => {
     if (!res.ok) return null;
 
     return await res.json();
+};
+
+export const createPost = async (author: string, blogUrl: string, title: string, content: string): Promise<PostCreateResult> => {
+    const data = {
+        title: title,
+        content: content
+    };
+
+    const res = await fetch(`${API_BASE}/blog/${author}/${blogUrl}`, {
+        method: "POST",
+        mode: "cors",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify(data)
+    });
+
+    if (res.ok) {
+        return {
+            success: true,
+            message: "",
+            url: (await res.json()).url
+        };
+    } else {
+        let msg: string;
+
+        try {
+            msg = (await res.json()).message;
+        } catch (_) {
+            msg = "Something went wrong. Try again."
+        }
+
+        return {
+            success: false,
+            message: msg,
+            url: ""
+        };
+    }
 };

@@ -23,9 +23,7 @@
 
 {#if res && res.success}
     <div class="status-message success">
-        Successfully created the blog. You can view it at: <a href="/~{currentUsername}/{res.url}"
-            >/~{currentUsername}/{res.url}</a
-        >
+        Successfully created the blog. You can view it at: <a href="/~{currentUsername}/{res.url}">/~{currentUsername}/{res.url}</a>.
     </div>
 {:else if res && !res.success}
     <div class="status-message error">

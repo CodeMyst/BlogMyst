@@ -8,24 +8,31 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import rs.myst.backend.constants.AuthConstants;
 import rs.myst.backend.model.Blog;
+import rs.myst.backend.model.Post;
 import rs.myst.backend.model.User;
 import rs.myst.backend.payload.BlogCreateInfo;
 import rs.myst.backend.payload.MessageResponse;
+import rs.myst.backend.payload.PostCreateInfo;
 import rs.myst.backend.repositories.BlogRepository;
+import rs.myst.backend.repositories.PostRepository;
 import rs.myst.backend.repositories.UserRepository;
 import rs.myst.backend.services.UserDetailsImpl;
 
 import javax.validation.Valid;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/blog")
 public class BlogController {
     private final BlogRepository blogRepository;
+    private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    public BlogController(BlogRepository blogRepository, UserRepository userRepository) {
+    public BlogController(BlogRepository blogRepository, PostRepository postRepository, UserRepository userRepository) {
         this.blogRepository = blogRepository;
+        this.postRepository = postRepository;
         this.userRepository = userRepository;
     }
 
@@ -61,6 +68,44 @@ public class BlogController {
         }
 
         return new ResponseEntity<>(blog.get(), HttpStatus.OK);
+    }
+
+    @PostMapping("/{author}/{url}")
+    @PreAuthorize(AuthConstants.USER_AUTH)
+    public ResponseEntity<?> createPost(@PathVariable("author") String author, @PathVariable("url") String url, @Valid @RequestBody PostCreateInfo createInfo) {
+        Slugify slugify = new Slugify();
+        String postUrl = slugify.slugify(createInfo.getTitle());
+
+        if (postRepository.existsByUrlAndBlogUrl(postUrl, url)) {
+            return ResponseEntity.badRequest().body(new MessageResponse("A post with the same title already exists on this blog."));
+        }
+
+        Optional<User> user = userRepository.findByUsername(author);
+
+        if (user.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        UserDetailsImpl currentUser = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (!currentUser.getUsername().equals(author)) {
+            return new ResponseEntity<>(new MessageResponse("Can't create a blog post for a different user."), HttpStatus.UNAUTHORIZED);
+        }
+
+        Optional<Blog> blog = blogRepository.findByUrlAndAuthorUsername(url, author);
+
+        if (blog.isEmpty()) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        Post post = new Post();
+        post.setBlog(blog.get());
+        post.setContent(createInfo.getContent());
+        post.setUrl(postUrl);
+        post.setCreatedAt(new Timestamp(new Date().getTime()));
+        post.setTitle(createInfo.getTitle());
+
+        return ResponseEntity.ok(postRepository.save(post));
     }
 
     @GetMapping("/{author}")

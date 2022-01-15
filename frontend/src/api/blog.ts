@@ -138,6 +138,45 @@ export const createPost = async (author: string, blogUrl: string, title: string,
     }
 };
 
+export const editPost = async (author: string, blogUrl: string, postUrl: string, title: string, content: string): Promise<PostCreateResult> => {
+    const data = {
+        title: title,
+        content: content
+    };
+
+    const res = await fetch(`${API_BASE}/blog/${author}/${blogUrl}/${postUrl}/edit`, {
+        method: "POST",
+        mode: "cors",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify(data)
+    });
+
+    if (res.ok) {
+        return {
+            success: true,
+            message: "",
+            url: (await res.json()).url
+        };
+    } else {
+        let msg: string;
+
+        try {
+            msg = (await res.json()).message;
+        } catch (_) {
+            msg = "Something went wrong. Try again."
+        }
+
+        return {
+            success: false,
+            message: msg,
+            url: ""
+        };
+    }
+};
+
 export const getPost = async (author: string, blogUrl: string, postUrl: string): Promise<Post | null> => {
     const res = await fetch(`${API_BASE}/blog/~${author}/${blogUrl}/${postUrl}`, {
         method: "GET",

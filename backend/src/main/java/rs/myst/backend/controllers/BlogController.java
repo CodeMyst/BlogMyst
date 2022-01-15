@@ -1,6 +1,7 @@
 package rs.myst.backend.controllers;
 
 import com.github.slugify.Slugify;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -106,6 +107,42 @@ public class BlogController {
         post.setTitle(createInfo.getTitle());
 
         return ResponseEntity.ok(postRepository.save(post));
+    }
+
+    @PostMapping("/{author}/{blog}/{post}/edit")
+    @PreAuthorize(AuthConstants.USER_AUTH)
+    public ResponseEntity<?> editPost(@PathVariable("author") String author, @PathVariable("blog") String blogUrl, @PathVariable("post") String postUrl, @Valid @RequestBody PostCreateInfo createInfo) {
+        Optional<Post> post = postRepository.findByUrlAndBlogUrl(postUrl, blogUrl);
+        if (post.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Optional<User> user = userRepository.findByUsername(author);
+
+        if (user.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        UserDetailsImpl currentUser = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (!currentUser.getUsername().equals(author)) {
+            return new ResponseEntity<>(new MessageResponse("Can't edit a blog post of a different user."), HttpStatus.UNAUTHORIZED);
+        }
+
+        if (!blogRepository.existsByUrlAndAuthorUsername(blogUrl, author)) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        Post newPost = new Post();
+        BeanUtils.copyProperties(post.get(), newPost, Post.class);
+
+        newPost.setContent(createInfo.getContent());
+        newPost.setTitle(createInfo.getTitle());
+        newPost.setLastEdit(new Timestamp(new Date().getTime()));
+
+        System.out.println(newPost.getUrl());
+
+        return ResponseEntity.ok(postRepository.save(newPost));
     }
 
     @GetMapping("/{author}")

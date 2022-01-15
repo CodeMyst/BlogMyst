@@ -1,8 +1,9 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { Blog, getBlog, getPost, Post } from "../../api/blog";
+    import { getPost, Post } from "../../api/blog";
     import { getUser, User } from "../../api/user";
     import showdown from "showdown";
+    import { getUsername } from "../../api/auth";
 
     export let params: { author: string; blog: string; post: string };
 
@@ -11,8 +12,11 @@
     let found = false;
 
     let date: Date;
+    let editDate: Date | null = null;
 
     let htmlContent: string;
+
+    let isAuthor = false;
 
     onMount(async () => {
         post = await getPost(params.author, params.blog, params.post);
@@ -24,16 +28,34 @@
 
         date = new Date(post.createdAt);
 
+        if (post.lastEdit) editDate = new Date(post.lastEdit);
+
         const converter = new showdown.Converter();
         htmlContent = converter.makeHtml(post.content);
+
+        const currentUser = await getUsername();
+        isAuthor = currentUser === author.username;
     });
 </script>
 
 {#if found}
-    <h2>{post.title}</h2>
+    <div class="title">
+        <div class="row">
+            <h2>{post.title}</h2>
+            {#if isAuthor}
+                <div class="edit-links">
+                    <a href="/~{author.username}/{post.blog.url}/{post.url}/edit" class="edit">edit</a>
+                    <a href="/" class="delete">delete</a>
+                </div>
+            {/if}
+        </div>
 
-    <div class="meta">
-        <p>Posted on <span class="date">{date.toDateString()}</span> by <a href="/~{author.username}">{author.username}</a> in <a href="/~{author.username}/{post.blog.url}">{post.blog.name}</a></p>
+        <div class="meta">
+            <p>Posted on: <span class="date">{date.toDateString()}</span> by <a href="/~{author.username}">{author.username}</a> in <a href="/~{author.username}/{post.blog.url}">{post.blog.name}</a></p>
+            {#if editDate}
+                <p>Edited on: <span class="date">{editDate.toDateString()}</span></p>
+            {/if}
+        </div>
     </div>
 
     <div class="content">
@@ -44,11 +66,36 @@
 {/if}
 
 <style>
-    .meta {
-        font-size: 0.9rem;
+    h2 {
+        border-bottom: none;
     }
 
-    .meta .date {
-        color: var(--nc-lk-2);
+    .title {
+        border-bottom: 3px solid var(--nc-bg-2);
+        margin-bottom: 1rem;
+    }
+
+    .title .row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .title .row .edit {
+        margin-right: 1rem;
+    }
+
+    .title .row .delete {
+        color: var(--nc-red);
+    }
+
+    .meta {
+        font-size: 0.9rem;
+        padding-bottom: 1rem;
+    }
+
+    .meta p {
+        margin: 0;
     }
 </style>

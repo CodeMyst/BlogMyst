@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
+import { getUsername } from "../../api/auth";
     import { Blog, getBlog } from "../../api/blog";
     import { getUser, User } from "../../api/user";
 
@@ -9,11 +10,15 @@
     let author: User;
     let found = false;
 
+    let isAuthor = false;
+
     onMount(async () => {
         blog = await getBlog(params.author, params.blog);
         author = await getUser(params.author);
 
         if (blog) found = true;
+
+        isAuthor = (await getUsername()) === author.username;
     });
 </script>
 
@@ -23,7 +28,11 @@
         <p>Author: <a href="/~{author.username}">{author.username}</a></p>
     </div>
 
-    <p class="empty">There's no posts here. You can create a new post <a href="/new/post">here</a>.</p>
+    {#if isAuthor}
+        <p class="empty">There's no posts here. You can create a new post <a href="/new/post">here</a>.</p>
+    {:else}
+        <p class="empty">There's no posts here.</p>
+    {/if}
 
 {:else}
     <h2>Blog not found</h2>

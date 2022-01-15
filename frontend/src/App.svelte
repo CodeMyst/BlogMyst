@@ -11,8 +11,8 @@
     import CreateBlog from "./pages/Blog/CreateBlog.svelte";
     import Blog from "./pages/Blog/Blog.svelte";
     import CreatePost from "./pages/Post/CreatePost.svelte";
-    import { claim_text } from "svelte/internal";
     import Post from "./pages/Post/Post.svelte";
+    import EditPost from "./pages/Post/EditPost.svelte";
 
     let page: any;
     let params: any;
@@ -40,6 +40,12 @@
         },
         () => (page = Post)
     );
+    router("/~:author/:blog/:post/edit",
+        (ctx, next) => {
+            params = ctx.params;
+            next();
+        },
+        () => (page = EditPost));
 
     router.start();
 

@@ -72,6 +72,36 @@ public class BlogController {
         return new ResponseEntity<>(blog.get(), HttpStatus.OK);
     }
 
+    @PatchMapping("/{author}/{url}")
+    @PreAuthorize(AuthConstants.USER_AUTH)
+    public ResponseEntity<?> editBlog(@PathVariable String author, @PathVariable String url, @Valid @RequestBody BlogCreateInfo createInfo) {
+        Optional<User> user = userRepository.findByUsername(author);
+
+        if (user.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        UserDetailsImpl currentUser = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (!currentUser.getUsername().equals(author)) {
+            return new ResponseEntity<>(new MessageResponse("Can't modify a blog for a different user."), HttpStatus.UNAUTHORIZED);
+        }
+
+        Optional<Blog> blog = blogRepository.findByUrlAndAuthorUsername(url, author);
+
+        if (blog.isEmpty()) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        Blog newBlog = new Blog();
+        BeanUtils.copyProperties(blog.get(), newBlog, Blog.class);
+
+        newBlog.setName(createInfo.getName());
+        newBlog.setDescription(createInfo.getDescription());
+
+        return ResponseEntity.ok(blogRepository.save(newBlog));
+    }
+
     @PostMapping("/{author}/{url}")
     @PreAuthorize(AuthConstants.USER_AUTH)
     public ResponseEntity<?> createPost(@PathVariable String author, @PathVariable String url, @Valid @RequestBody PostCreateInfo createInfo) {

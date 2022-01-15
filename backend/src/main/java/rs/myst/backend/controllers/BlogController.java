@@ -19,6 +19,7 @@ import rs.myst.backend.repositories.PostRepository;
 import rs.myst.backend.repositories.UserRepository;
 import rs.myst.backend.services.UserDetailsImpl;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -61,7 +62,7 @@ public class BlogController {
     }
 
     @GetMapping("/{author}/{url}")
-    public ResponseEntity<?> getBlog(@PathVariable("author") String author, @PathVariable("url") String url) {
+    public ResponseEntity<?> getBlog(@PathVariable String author, @PathVariable String url) {
         Optional<Blog> blog = blogRepository.findByUrlAndAuthorUsername(url, author);
 
         if (blog.isEmpty()) {
@@ -73,7 +74,7 @@ public class BlogController {
 
     @PostMapping("/{author}/{url}")
     @PreAuthorize(AuthConstants.USER_AUTH)
-    public ResponseEntity<?> createPost(@PathVariable("author") String author, @PathVariable("url") String url, @Valid @RequestBody PostCreateInfo createInfo) {
+    public ResponseEntity<?> createPost(@PathVariable String author, @PathVariable String url, @Valid @RequestBody PostCreateInfo createInfo) {
         Slugify slugify = new Slugify();
         String postUrl = slugify.slugify(createInfo.getTitle());
 
@@ -109,49 +110,43 @@ public class BlogController {
         return ResponseEntity.ok(postRepository.save(post));
     }
 
-    @PostMapping("/{author}/{blog}/{post}/edit")
+    @PatchMapping("/{author}/{blog}/{post}")
     @PreAuthorize(AuthConstants.USER_AUTH)
-    public ResponseEntity<?> editPost(@PathVariable("author") String author, @PathVariable("blog") String blogUrl, @PathVariable("post") String postUrl, @Valid @RequestBody PostCreateInfo createInfo) {
-        Optional<Post> post = postRepository.findByUrlAndBlogUrl(postUrl, blogUrl);
-        if (post.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<?> editPost(@PathVariable String author, @PathVariable("blog") String blogUrl, @PathVariable("post") String postUrl, @Valid @RequestBody PostCreateInfo createInfo) {
+        var res = verifyPostUpdate(author, blogUrl, postUrl);
+        if (res.isPresent()) return res.get();
 
-        Optional<User> user = userRepository.findByUsername(author);
-
-        if (user.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        UserDetailsImpl currentUser = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (!currentUser.getUsername().equals(author)) {
-            return new ResponseEntity<>(new MessageResponse("Can't edit a blog post of a different user."), HttpStatus.UNAUTHORIZED);
-        }
-
-        if (!blogRepository.existsByUrlAndAuthorUsername(blogUrl, author)) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+        Post post = postRepository.findByUrlAndBlogUrl(postUrl, blogUrl).orElseThrow();
 
         Post newPost = new Post();
-        BeanUtils.copyProperties(post.get(), newPost, Post.class);
+        BeanUtils.copyProperties(post, newPost, Post.class);
 
         newPost.setContent(createInfo.getContent());
         newPost.setTitle(createInfo.getTitle());
         newPost.setLastEdit(new Timestamp(new Date().getTime()));
 
-        System.out.println(newPost.getUrl());
-
         return ResponseEntity.ok(postRepository.save(newPost));
     }
 
+    @DeleteMapping("/{author}/{blog}/{post}")
+    @PreAuthorize(AuthConstants.USER_AUTH)
+    @Transactional
+    public ResponseEntity<?> deletePost(@PathVariable String author, @PathVariable("blog") String blogUrl, @PathVariable("post") String postUrl) {
+        var res = verifyPostUpdate(author, blogUrl, postUrl);
+        if (res.isPresent()) return res.get();
+
+        postRepository.deleteByUrlAndBlogUrl(postUrl, blogUrl);
+
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{author}")
-    public ResponseEntity<?> getBlogs(@PathVariable("author") String author) {
+    public ResponseEntity<?> getBlogs(@PathVariable String author) {
         return ResponseEntity.ok(blogRepository.findByAuthorUsername(author));
     }
 
     @GetMapping("/{author}/{blog}/{post}")
-    public ResponseEntity<?> getPost(@PathVariable("author") String ignoredAuthor, @PathVariable("blog") String blog, @PathVariable("post") String post) {
+    public ResponseEntity<?> getPost(@PathVariable("author") String ignoredAuthor, @PathVariable String blog, @PathVariable String post) {
         Optional<Post> res = postRepository.findByUrlAndBlogUrl(post, blog);
 
         if (res.isEmpty()) {
@@ -159,5 +154,29 @@ public class BlogController {
         }
 
         return ResponseEntity.ok(res);
+    }
+
+    private Optional<ResponseEntity<?>> verifyPostUpdate(String author, String blogUrl, String postUrl) {
+        if (!postRepository.existsByUrlAndBlogUrl(postUrl, blogUrl)) {
+            return Optional.of(ResponseEntity.notFound().build());
+        }
+
+        Optional<User> user = userRepository.findByUsername(author);
+
+        if (user.isEmpty()) {
+            return Optional.of(ResponseEntity.notFound().build());
+        }
+
+        UserDetailsImpl currentUser = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (!currentUser.getUsername().equals(author)) {
+            return Optional.of(new ResponseEntity<>(new MessageResponse("Can't modify a blog post of a different user."), HttpStatus.UNAUTHORIZED));
+        }
+
+        if (!blogRepository.existsByUrlAndAuthorUsername(blogUrl, author)) {
+            return Optional.of(new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
+        }
+
+        return Optional.empty();
     }
 }

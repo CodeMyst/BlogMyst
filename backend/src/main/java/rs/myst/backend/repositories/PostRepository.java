@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, String> {
     boolean existsByUrlAndBlogUrl(String url, String blogUrl);
     Optional<Post> findByUrlAndBlogUrl(String url, String blogUrl);
+    void deleteByUrlAndBlogUrl(String url, String blogUrl);
 }

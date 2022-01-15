@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { getPost, Post } from "../../api/blog";
+    import { deletePost, getPost, Post } from "../../api/blog";
     import { getUser, User } from "../../api/user";
     import showdown from "showdown";
     import { getUsername } from "../../api/auth";
@@ -36,6 +36,12 @@
         const currentUser = await getUsername();
         isAuthor = currentUser === author.username;
     });
+
+    const onDelete = async () => {
+        if (confirm("Are you sure you want to delete this post?")) {
+            await deletePost(author.username, post.blog.url, post.url);
+        }
+    };
 </script>
 
 {#if found}
@@ -45,7 +51,7 @@
             {#if isAuthor}
                 <div class="edit-links">
                     <a href="/~{author.username}/{post.blog.url}/{post.url}/edit" class="edit">edit</a>
-                    <a href="/" class="delete">delete</a>
+                    <a href="/" on:click={onDelete} class="delete">delete</a>
                 </div>
             {/if}
         </div>

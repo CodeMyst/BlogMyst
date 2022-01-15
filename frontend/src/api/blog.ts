@@ -144,8 +144,8 @@ export const editPost = async (author: string, blogUrl: string, postUrl: string,
         content: content
     };
 
-    const res = await fetch(`${API_BASE}/blog/${author}/${blogUrl}/${postUrl}/edit`, {
-        method: "POST",
+    const res = await fetch(`${API_BASE}/blog/${author}/${blogUrl}/${postUrl}`, {
+        method: "PATCH",
         mode: "cors",
         headers: {
             "Content-Type": "application/json"
@@ -175,6 +175,17 @@ export const editPost = async (author: string, blogUrl: string, postUrl: string,
             url: ""
         };
     }
+};
+
+export const deletePost = async (author: string, blogUrl: string, postUrl: string) => {
+    await fetch(`${API_BASE}/blog/${author}/${blogUrl}/${postUrl}`, {
+        method: "DELETE",
+        mode: "cors",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "include"
+    });
 };
 
 export const getPost = async (author: string, blogUrl: string, postUrl: string): Promise<Post | null> => {

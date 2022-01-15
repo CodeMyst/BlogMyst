@@ -107,6 +107,17 @@ export const editBlog = async (author: string, blog: string, name: string, descr
     }
 };
 
+export const deleteBlog = async (author: string, blogUrl: string) => {
+    await fetch(`${API_BASE}/blog/${author}/${blogUrl}`, {
+        method: "DELETE",
+        mode: "cors",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "include"
+    });
+};
+
 export const getBlog = async (author: string, url: string): Promise<Blog | null> => {
     const res = await fetch(`${API_BASE}/blog/${author}/${url}`, {
         method: "GET",

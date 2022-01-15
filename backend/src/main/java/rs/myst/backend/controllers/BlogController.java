@@ -102,6 +102,29 @@ public class BlogController {
         return ResponseEntity.ok(blogRepository.save(newBlog));
     }
 
+    @DeleteMapping("/{author}/{url}")
+    @PreAuthorize(AuthConstants.USER_AUTH)
+    @Transactional
+    public ResponseEntity<?> deleteBlog(@PathVariable String author, @PathVariable String url) {
+        if (!userRepository.existsByUsername(author)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        UserDetailsImpl currentUser = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (!currentUser.getUsername().equals(author)) {
+            return new ResponseEntity<>(new MessageResponse("Can't modify a blog for a different user."), HttpStatus.UNAUTHORIZED);
+        }
+
+        if (!blogRepository.existsByUrlAndAuthorUsername(url, author)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        blogRepository.deleteByUrlAndAuthorUsername(url, author);
+
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/{author}/{url}")
     @PreAuthorize(AuthConstants.USER_AUTH)
     public ResponseEntity<?> createPost(@PathVariable String author, @PathVariable String url, @Valid @RequestBody PostCreateInfo createInfo) {

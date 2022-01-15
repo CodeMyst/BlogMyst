@@ -33,7 +33,7 @@ public class Post {
     @Column(name = "upvotes")
     private int upvotes;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Collection<Comment> comments;
 
     @ManyToOne

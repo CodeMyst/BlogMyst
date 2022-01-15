@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { getUsername } from "../../api/auth";
-    import { Blog, editBlog, getBlog, getBlogPosts, Post } from "../../api/blog";
+    import { Blog, deleteBlog, editBlog, getBlog, getBlogPosts, Post } from "../../api/blog";
     import { getUser, User } from "../../api/user";
 
     export let params: { author: string; blog: string };
@@ -33,6 +33,12 @@
         await editBlog(author.username, blog.url, blog.name, blog.description);
         editing = false;
     };
+
+    const onDeleteBlog = async () => {
+        if (confirm("Are you sure you want to delete your blog?")) {
+            await deleteBlog(author.username, blog.url);
+        }
+    };
 </script>
 
 {#if found}
@@ -58,7 +64,7 @@
                     {:else}
                         <a href="/" class="save" on:click|preventDefault={saveBlogMeta}>save</a>
                     {/if}
-                    <a href="/" class="delete">delete</a>
+                    <a href="/" class="delete" on:click={onDeleteBlog}>delete</a>
                 </div>
             {/if}
         </div>

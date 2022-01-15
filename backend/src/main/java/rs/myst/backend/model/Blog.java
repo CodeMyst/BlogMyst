@@ -25,10 +25,10 @@ public class Blog {
     @JoinColumn(name = "author_username", referencedColumnName = "username", nullable = false)
     private User author;
 
-    @OneToMany(mappedBy = "blog")
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Collection<BlogFollow> follows;
 
-    @OneToMany(mappedBy = "blog")
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Collection<Post> posts;
 
     public String getName() {

@@ -108,7 +108,13 @@ public class BlogController {
         Slugify slugify = new Slugify();
         String postUrl = slugify.slugify(createInfo.getTitle());
 
-        if (postRepository.existsByUrlAndBlogUrl(postUrl, url)) {
+        Optional<Blog> blog = blogRepository.findByUrlAndAuthorUsername(url, author);
+
+        if (blog.isEmpty()) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        if (postRepository.existsByUrlAndBlog(postUrl, blog.get())) {
             return ResponseEntity.badRequest().body(new MessageResponse("A post with the same title already exists on this blog."));
         }
 
@@ -122,12 +128,6 @@ public class BlogController {
 
         if (!currentUser.getUsername().equals(author)) {
             return new ResponseEntity<>(new MessageResponse("Can't create a blog post for a different user."), HttpStatus.UNAUTHORIZED);
-        }
-
-        Optional<Blog> blog = blogRepository.findByUrlAndAuthorUsername(url, author);
-
-        if (blog.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
 
         Post post = new Post();
@@ -146,7 +146,8 @@ public class BlogController {
         var res = verifyPostUpdate(author, blogUrl, postUrl);
         if (res.isPresent()) return res.get();
 
-        Post post = postRepository.findByUrlAndBlogUrl(postUrl, blogUrl).orElseThrow();
+        Blog blog = blogRepository.findByUrlAndAuthorUsername(blogUrl, author).orElseThrow();
+        Post post = postRepository.findByUrlAndBlog(postUrl, blog).orElseThrow();
 
         Post newPost = new Post();
         BeanUtils.copyProperties(post, newPost, Post.class);
@@ -165,7 +166,8 @@ public class BlogController {
         var res = verifyPostUpdate(author, blogUrl, postUrl);
         if (res.isPresent()) return res.get();
 
-        postRepository.deleteByUrlAndBlogUrl(postUrl, blogUrl);
+        Blog blog = blogRepository.findByUrlAndAuthorUsername(blogUrl, author).orElseThrow();
+        postRepository.deleteByUrlAndBlog(postUrl, blog);
 
         return ResponseEntity.ok().build();
     }
@@ -175,9 +177,13 @@ public class BlogController {
         return ResponseEntity.ok(blogRepository.findByAuthorUsername(author));
     }
 
-    @GetMapping("/{author}/{blog}/{post}")
-    public ResponseEntity<?> getPost(@PathVariable("author") String ignoredAuthor, @PathVariable String blog, @PathVariable String post) {
-        Optional<Post> res = postRepository.findByUrlAndBlogUrl(post, blog);
+    @GetMapping("/{author}/{blogUrl}/{post}")
+    public ResponseEntity<?> getPost(@PathVariable String author, @PathVariable String blogUrl, @PathVariable String post) {
+        Optional<Blog> blog = blogRepository.findByUrlAndAuthorUsername(blogUrl, author);
+
+        if (blog.isEmpty()) return ResponseEntity.notFound().build();
+
+        Optional<Post> res = postRepository.findByUrlAndBlog(post, blog.get());
 
         if (res.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -186,8 +192,21 @@ public class BlogController {
         return ResponseEntity.ok(res);
     }
 
+    @GetMapping("/{author}/{blogUrl}/posts")
+    public ResponseEntity<?> getBlogPosts(@PathVariable String author, @PathVariable String blogUrl) {
+        Optional<Blog> blog = blogRepository.findByUrlAndAuthorUsername(blogUrl, author);
+
+        if (blog.isEmpty()) return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(postRepository.findByBlog(blog.get()));
+    }
+
     private Optional<ResponseEntity<?>> verifyPostUpdate(String author, String blogUrl, String postUrl) {
-        if (!postRepository.existsByUrlAndBlogUrl(postUrl, blogUrl)) {
+        Optional<Blog> blog = blogRepository.findByUrlAndAuthorUsername(blogUrl, author);
+
+        if (blog.isEmpty()) return Optional.of(ResponseEntity.notFound().build());
+
+        if (!postRepository.existsByUrlAndBlog(postUrl, blog.get())) {
             return Optional.of(ResponseEntity.notFound().build());
         }
 
@@ -201,10 +220,6 @@ public class BlogController {
 
         if (!currentUser.getUsername().equals(author)) {
             return Optional.of(new ResponseEntity<>(new MessageResponse("Can't modify a blog post of a different user."), HttpStatus.UNAUTHORIZED));
-        }
-
-        if (!blogRepository.existsByUrlAndAuthorUsername(blogUrl, author)) {
-            return Optional.of(new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
         }
 
         return Optional.empty();

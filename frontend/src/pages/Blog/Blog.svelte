@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
-import { getUsername } from "../../api/auth";
-    import { Blog, editBlog, getBlog } from "../../api/blog";
+    import { getUsername } from "../../api/auth";
+    import { Blog, editBlog, getBlog, getBlogPosts, Post } from "../../api/blog";
     import { getUser, User } from "../../api/user";
 
     export let params: { author: string; blog: string };
@@ -14,13 +14,19 @@ import { getUsername } from "../../api/auth";
 
     let editing = false;
 
+    let posts: Post[] = [];
+
     onMount(async () => {
         blog = await getBlog(params.author, params.blog);
         author = await getUser(params.author);
 
         if (blog) found = true;
 
+        if (!found) return;
+
         isAuthor = (await getUsername()) === author.username;
+
+        posts = await getBlogPosts(author.username, blog.url);
     });
 
     const saveBlogMeta = async () => {
@@ -58,10 +64,27 @@ import { getUsername } from "../../api/auth";
         </div>
     </div>
 
-    {#if isAuthor}
-        <p class="empty">There's no posts here. You can create a new post <a href="/new/post">here</a>.</p>
+    {#if posts.length === 0}
+        {#if isAuthor}
+            <p class="empty">There's no posts here. You can create a new post <a href="/new/post">here</a>.</p>
+        {:else}
+            <p class="empty">There's no posts here.</p>
+        {/if}
     {:else}
-        <p class="empty">There's no posts here.</p>
+        {#each posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) as post}
+            <div class="post">
+                <a href="/~{author.username}/{blog.url}/{post.url}" class="post-title">{post.title}</a>
+                <div class="meta">
+                    <p>{new Date(post.createdAt).toDateString()}</p>
+
+                    {#if post.lastEdit}
+                        <p>Edited at: {new Date(post.lastEdit).toDateString()}</p>
+                    {/if}
+
+                    <p>{post.upvotes} upvotes</p>
+                </div>
+            </div>
+        {/each}
     {/if}
 
 {:else}
@@ -116,5 +139,36 @@ import { getUsername } from "../../api/auth";
 
     .title .edit-description {
         margin: 0;
+    }
+
+    .post {
+        border: 3px dashed var(--nc-bg-2);
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .post .post-title {
+        padding-bottom: 0.5rem;
+        display: inline-block;
+        font-size: 1.25rem;
+    }
+
+    .post .meta {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .post .meta p {
+        margin: 0;
+        margin-right: 1rem;
+    }
+
+    .post .meta p::after {
+        content: '-';
+        padding-left: 1rem;
+    }
+
+    .post .meta p:last-child::after {
+        content: '';
     }
 </style>

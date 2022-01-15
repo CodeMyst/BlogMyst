@@ -28,7 +28,6 @@ create table post
     title      tinytext    not null,
     content    mediumtext  not null,
     upvotes    int         not null,
-    downvotes  int         not null,
 
     constraint fk_post_blog
         foreign key (blog_url)

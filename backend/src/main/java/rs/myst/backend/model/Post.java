@@ -1,6 +1,5 @@
 package rs.myst.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -33,10 +32,6 @@ public class Post {
     @Basic
     @Column(name = "upvotes")
     private int upvotes;
-
-    @Basic
-    @Column(name = "downvotes")
-    private int downvotes;
 
     @OneToMany(mappedBy = "post")
     private Collection<Comment> comments;
@@ -85,25 +80,17 @@ public class Post {
         this.upvotes = upvotes;
     }
 
-    public int getDownvotes() {
-        return downvotes;
-    }
-
-    public void setDownvotes(int downvotes) {
-        this.downvotes = downvotes;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Post post = (Post) o;
-        return upvotes == post.upvotes && downvotes == post.downvotes && Objects.equals(createdAt, post.createdAt) && Objects.equals(lastEdit, post.lastEdit) && Objects.equals(title, post.title) && Objects.equals(content, post.content) && Objects.equals(url, post.url);
+        return upvotes == post.upvotes && Objects.equals(createdAt, post.createdAt) && Objects.equals(lastEdit, post.lastEdit) && Objects.equals(title, post.title) && Objects.equals(content, post.content) && Objects.equals(url, post.url);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(url, createdAt, lastEdit, title, content, upvotes, downvotes);
+        return Objects.hash(url, createdAt, lastEdit, title, content, upvotes);
     }
 
     @JsonManagedReference

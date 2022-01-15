@@ -71,7 +71,7 @@
 </form>
 
 {#if password !== passwordConfirm}
-    <div class="error">
+    <div class="error status-message">
         Passwords don't match.
     </div>
 {/if}

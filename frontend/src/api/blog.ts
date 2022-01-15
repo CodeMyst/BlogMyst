@@ -27,7 +27,6 @@ export interface Post {
     createdAt: Date;
     lastEdit: Date;
     upvotes: number;
-    downvotes: number;
 }
 
 export const createBlog = async (name: string, description: string): Promise<BlogCreateResult> => {
@@ -228,7 +227,7 @@ export const deletePost = async (author: string, blogUrl: string, postUrl: strin
 };
 
 export const getPost = async (author: string, blogUrl: string, postUrl: string): Promise<Post | null> => {
-    const res = await fetch(`${API_BASE}/blog/~${author}/${blogUrl}/${postUrl}`, {
+    const res = await fetch(`${API_BASE}/blog/${author}/${blogUrl}/${postUrl}`, {
         method: "GET",
         mode: "cors",
         headers: {
@@ -238,6 +237,21 @@ export const getPost = async (author: string, blogUrl: string, postUrl: string):
     });
 
     if (!res.ok) return null;
+
+    return await res.json();
+};
+
+export const getBlogPosts = async (author: string, blogUrl: string): Promise<Post[]> => {
+    const res = await fetch(`${API_BASE}/blog/${author}/${blogUrl}/posts`, {
+        method: "GET",
+        mode: "cors",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "include"
+    });
+
+    if (!res.ok) return [];
 
     return await res.json();
 };

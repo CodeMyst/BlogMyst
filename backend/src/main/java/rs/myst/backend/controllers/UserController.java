@@ -20,7 +20,7 @@ public class UserController {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<?> getUser(@PathVariable("username") String username) {
+    public ResponseEntity<?> getUser(@PathVariable String username) {
         Optional<User> user = userRepository.findByUsername(username);
 
         if (user.isEmpty()) return ResponseEntity.notFound().build();

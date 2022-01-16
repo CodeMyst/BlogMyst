@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { getUsername } from "../../api/auth";
+    import { getUsername, isLoggedIn } from "../../api/auth";
     import { Blog, deleteBlog, editBlog, getBlog, getBlogPosts, Post } from "../../api/blog";
     import { getUser, User } from "../../api/user";
 
@@ -24,7 +24,9 @@
 
         if (!found) return;
 
-        isAuthor = (await getUsername()) === author.username;
+        if (await isLoggedIn()) {
+            isAuthor = (await getUsername()) === author.username;
+        }
 
         posts = await getBlogPosts(author.username, blog.url);
     });

@@ -13,6 +13,7 @@
     import CreatePost from "./pages/Post/CreatePost.svelte";
     import Post from "./pages/Post/Post.svelte";
     import EditPost from "./pages/Post/EditPost.svelte";
+    import User from "./pages/User/User.svelte";
 
     let page: any;
     let params: any;
@@ -20,6 +21,15 @@
     router("/", () => (page = Home));
     router("/login", () => (page = Login));
     router("/register", () => (page = Register));
+
+    router(
+        "/~:user",
+        (ctx, next) => {
+            params = ctx.params;
+            next();
+        },
+        () => (page = User)
+    );
 
     router("/new/blog", () => (page = CreateBlog));
     router(
@@ -40,12 +50,14 @@
         },
         () => (page = Post)
     );
-    router("/~:author/:blog/:post/edit",
+    router(
+        "/~:author/:blog/:post/edit",
         (ctx, next) => {
             params = ctx.params;
             next();
         },
-        () => (page = EditPost));
+        () => (page = EditPost)
+    );
 
     router.start();
 

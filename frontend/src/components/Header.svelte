@@ -17,7 +17,7 @@
 
         <ul>
             {#if username}
-                <li><a href="/users/{username}">{username}</a></li>
+                <li><a href="/~{username}">{username}</a></li>
                 <!-- TODO: just a temporary place for a new blog link -->
                 <li><a href="/new/blog">New Blog</a></li>
                 <li><a href="/new/post">New Post</a></li>

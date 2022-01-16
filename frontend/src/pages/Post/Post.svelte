@@ -3,7 +3,7 @@
     import { deletePost, getPost, Post } from "../../api/blog";
     import { getUser, User } from "../../api/user";
     import showdown from "showdown";
-    import { getUsername } from "../../api/auth";
+    import { getUsername, isLoggedIn } from "../../api/auth";
 
     export let params: { author: string; blog: string; post: string };
 
@@ -33,8 +33,10 @@
         const converter = new showdown.Converter();
         htmlContent = converter.makeHtml(post.content);
 
-        const currentUser = await getUsername();
-        isAuthor = currentUser === author.username;
+        if (await isLoggedIn()) {
+            const currentUser = await getUsername();
+            isAuthor = currentUser === author.username;
+        }
     });
 
     const onDelete = async () => {

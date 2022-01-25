@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import { getUsername, isLoggedIn } from "../../api/auth";
     import { Blog, deleteBlog, editBlog, getBlog, getBlogPosts, Post } from "../../api/blog";
-    import { getUser, User } from "../../api/user";
+    import { getUser, isFollowingBlog, toggleFollowBlog, User } from "../../api/user";
 
     export let params: { author: string; blog: string };
 
@@ -10,11 +10,14 @@
     let author: User;
     let found = false;
 
+    let loggedIn = false;
     let isAuthor = false;
 
     let editing = false;
 
     let posts: Post[] = [];
+
+    let isFollowing = false;
 
     onMount(async () => {
         blog = await getBlog(params.author, params.blog);
@@ -24,8 +27,11 @@
 
         if (!found) return;
 
-        if (await isLoggedIn()) {
+        loggedIn = await isLoggedIn();
+
+        if (loggedIn) {
             isAuthor = (await getUsername()) === author.username;
+            isFollowing = await isFollowingBlog(author.username, blog.url);
         }
 
         posts = await getBlogPosts(author.username, blog.url);
@@ -41,6 +47,11 @@
             await deleteBlog(author.username, blog.url);
         }
     };
+
+    const onFollow = async () => {
+        toggleFollowBlog(author.username, blog.url);
+        isFollowing = !isFollowing;
+    };
 </script>
 
 {#if found}
@@ -48,7 +59,16 @@
         {#if editing}
             <input class="edit-title" type="text" bind:value={blog.name}>
         {:else}
-            <h2>{blog.name}</h2>
+            <div class="title-follow">
+                <h2>{blog.name}</h2>
+                {#if loggedIn}
+                    {#if isFollowing}
+                        <a href="/" on:click|preventDefault={onFollow}>- unfollow</a>
+                    {:else}
+                        <a href="/" on:click|preventDefault={onFollow}>+ follow</a>
+                    {/if}
+                {/if}
+            </div>
         {/if}
         <p>Author: <a href="/~{author.username}">{author.username}</a></p>
 
@@ -113,6 +133,16 @@
 
     .title h2 {
         border-bottom: none;
+        margin: 0;
+        padding: 0;
+        margin-right: 1rem;
+    }
+
+    .title .title-follow {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin-bottom: 1rem;
     }
 
     .title .description {

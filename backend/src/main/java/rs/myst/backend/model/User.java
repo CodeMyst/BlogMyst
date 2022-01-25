@@ -22,9 +22,6 @@ public class User {
     @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Collection<Blog> blogs;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Collection<BlogFollow> follows;
-
     @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Collection<Comment> comments;
 
@@ -74,14 +71,6 @@ public class User {
 
     public void setBlogs(Collection<Blog> blogs) {
         this.blogs = blogs;
-    }
-
-    public Collection<BlogFollow> getFollows() {
-        return follows;
-    }
-
-    public void setFollows(Collection<BlogFollow> follows) {
-        this.follows = follows;
     }
 
     public Collection<Comment> getComments() {

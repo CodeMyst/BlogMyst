@@ -1,34 +1,20 @@
 package rs.myst.backend.model;
 
-import javax.persistence.*;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
-@Table(name = "blog_follow", schema = "blogmyst")
-@IdClass(BlogFollowPK.class)
+@Table(name = "blog_follow")
 public class BlogFollow {
-    @ManyToOne
-    @Id
-    @JoinColumn(name = "user_username", referencedColumnName = "username", nullable = false)
-    private User user;
+    @EmbeddedId
+    private BlogFollowId id;
 
-    @ManyToOne
-    @Id
-    @JoinColumn(name = "blog_url", referencedColumnName = "url", nullable = false)
-    private Blog blog;
-
-    public User getUser() {
-        return user;
+    public BlogFollowId getId() {
+        return id;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Blog getBlog() {
-        return blog;
-    }
-
-    public void setBlog(Blog blog) {
-        this.blog = blog;
+    public void setId(BlogFollowId id) {
+        this.id = id;
     }
 }

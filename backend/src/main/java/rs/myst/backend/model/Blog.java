@@ -26,9 +26,6 @@ public class Blog {
     private User author;
 
     @OneToMany(mappedBy = "blog", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Collection<BlogFollow> follows;
-
-    @OneToMany(mappedBy = "blog", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Collection<Post> posts;
 
     public String getName() {
@@ -67,15 +64,6 @@ public class Blog {
 
     public void setAuthor(User author) {
         this.author = author;
-    }
-
-    @JsonManagedReference
-    public Collection<BlogFollow> getFollows() {
-        return follows;
-    }
-
-    public void setFollows(Collection<BlogFollow> follows) {
-        this.follows = follows;
     }
 
     @JsonBackReference

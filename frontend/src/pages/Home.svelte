@@ -8,7 +8,10 @@
     let loggedIn: boolean = false;
     let viewFollowed: boolean = false;
 
-    let postsPromise = getAllPosts();
+    let allPostsPage = 0;
+    let followedPostsPage = 0;
+
+    let postsPromise = getAllPosts(allPostsPage);
 
     onMount(async () => {
         loggedIn = await isLoggedIn();
@@ -21,7 +24,27 @@
 
     const toggleViewFollowed = (v: boolean) => {
         viewFollowed = v;
-        postsPromise = viewFollowed ? getFollowedPosts() : getAllPosts();
+        postsPromise = viewFollowed ? getFollowedPosts(followedPostsPage) : getAllPosts(allPostsPage);
+    };
+
+    const prevPage = () => {
+        if (viewFollowed) {
+            followedPostsPage--;
+        } else {
+            allPostsPage--;
+        }
+        postsPromise = viewFollowed ? getFollowedPosts(followedPostsPage) : getAllPosts(allPostsPage);
+        window.scrollTo(0, 0);
+    };
+
+    const nextPage = () => {
+        if (viewFollowed) {
+            followedPostsPage++;
+        } else {
+            allPostsPage++;
+        }
+        postsPromise = viewFollowed ? getFollowedPosts(followedPostsPage) : getAllPosts(allPostsPage);
+        window.scrollTo(0, 0);
     };
 </script>
 
@@ -83,6 +106,20 @@
                 </div>
             </article>
         {/each}
+
+        {#if posts.totalPages > 1}
+            <div class="pager">
+                {#if !posts.first}
+                    <a href="/" on:click|preventDefault={() => prevPage()}>&laquo;</a>
+                {/if}
+
+                <span>page {posts.number + 1}</span>
+
+                {#if !posts.last}
+                    <a href="/" on:click|preventDefault={() => nextPage()}>&raquo;</a>
+                {/if}
+            </div>
+        {/if}
     {/await}
 </div>
 
@@ -132,5 +169,10 @@
 
     .select-posts a.selected {
         color: var(--nc-lk-1);
+    }
+
+    .pager {
+        text-align: center;
+        margin-bottom: 1rem;
     }
 </style>

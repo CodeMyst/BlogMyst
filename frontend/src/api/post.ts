@@ -19,8 +19,8 @@ export interface PostPage {
     last: boolean;
 }
 
-export const getAllPosts = async (): Promise<PostPage> => {
-    const res = await fetch(`${API_BASE}/post/all`, {
+export const getAllPosts = async (page: number): Promise<PostPage> => {
+    const res = await fetch(`${API_BASE}/post/all/${page}`, {
         method: "get",
         mode: "cors",
         headers: {
@@ -32,8 +32,8 @@ export const getAllPosts = async (): Promise<PostPage> => {
     return await res.json();
 };
 
-export const getFollowedPosts = async (): Promise<PostPage> => {
-    const res = await fetch(`${API_BASE}/post/followed`, {
+export const getFollowedPosts = async (page: number): Promise<PostPage> => {
+    const res = await fetch(`${API_BASE}/post/followed/${page}`, {
         method: "get",
         mode: "cors",
         headers: {

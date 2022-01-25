@@ -1,6 +1,10 @@
 package rs.myst.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -27,6 +31,18 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Collection<Report> reports;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Collection<BlogFollow> follows = new ArrayList<>();
+
+    @JsonManagedReference
+    public Collection<BlogFollow> getFollows() {
+        return follows;
+    }
+
+    public void setFollows(Collection<BlogFollow> follows) {
+        this.follows = follows;
+    }
 
     public String getUsername() {
         return username;
@@ -65,6 +81,7 @@ public class User {
         return Objects.hash(username, role, passwordHash);
     }
 
+    @JsonBackReference
     public Collection<Blog> getBlogs() {
         return blogs;
     }

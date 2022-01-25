@@ -1,9 +1,10 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { deletePost, getPost, Post } from "../../api/blog";
+    import { deletePost, getPost } from "../../api/blog";
     import { getUser, User } from "../../api/user";
     import showdown from "showdown";
     import { getUsername, isLoggedIn } from "../../api/auth";
+    import type { Post } from "../../api/post";
 
     export let params: { author: string; blog: string; post: string };
 

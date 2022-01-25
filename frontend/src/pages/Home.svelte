@@ -1,85 +1,89 @@
+<script lang="ts">
+    import Showdown from "showdown";
+    import { onMount } from "svelte";
+    import { isLoggedIn } from "../api/auth";
+    import { getAllPosts, getFollowedPosts } from "../api/post";
+    import { getFollowedBlogs } from "../api/user";
+
+    let loggedIn: boolean = false;
+    let viewFollowed: boolean = false;
+
+    let postsPromise = getAllPosts();
+
+    onMount(async () => {
+        loggedIn = await isLoggedIn();
+    });
+
+    const convertToHtml = (content: string): string => {
+        const converter = new Showdown.Converter();
+        return converter.makeHtml(content);
+    };
+
+    const toggleViewFollowed = (v: boolean) => {
+        viewFollowed = v;
+        postsPromise = viewFollowed ? getFollowedPosts() : getAllPosts();
+    };
+</script>
+
+{#if loggedIn}
+<div class="select-posts">
+    <a href="/" class:selected={!viewFollowed} on:click|preventDefault={() => toggleViewFollowed(false)}>all blogs</a>
+    <a href="/" class:selected={viewFollowed} on:click|preventDefault={() => toggleViewFollowed(true)}>followed blogs</a>
+</div>
+{/if}
+
 <div class="feed">
-    <article>
-        <div class="post-heading">
-            <div class="title">
-                <a href="/"><h3>Example post</h3></a>
-                <div class="meta">
-                    <small class="date">Published on 4. Jan 2022</small>
-                    <small class="posted-by">
-                        by <a href="/">CodeMyst</a> in
-                        <a href="/">CodeMyst's Blog</a>
-                    </small>
+    {#await postsPromise}
+        <p>Loading posts...</p>
+    {:then posts} 
+        {#if viewFollowed}
+            {#await getFollowedBlogs() then followed}
+                {#if followed.length === 0}
+                    <p>You aren't following any blogs.</p>
+                {:else}
+                    <details>
+                        <summary>List of followed blogs</summary>
+
+                        <ul>
+                            {#each followed as blog}
+                                <li><a href="/~{blog.author.username}/{blog.url}">{blog.author.username}/{blog.url}</a></li>
+                            {/each}
+                        </ul>
+                    </details>
+                {/if}
+            {/await}
+        {/if}
+
+        {#if posts.content.length === 0}
+            <p>No posts.</p>
+        {/if}
+
+        {#each posts.content as post}
+            <article>
+                <div class="post-heading">
+                    <div class="title">
+                        <a href="/~{post.blog.author.username}/{post.blog.url}/{post.url}"><h3>{post.title}</h3></a>
+                        <div class="meta">
+                            <small class="date">Published on {new Date(post.createdAt).toDateString()}</small>
+
+                            {#if post.lastEdit !== null}
+                                <small class="date">Edited on {new Date(post.lastEdit).toDateString()}</small>
+                            {/if}
+
+                            <small class="posted-by">
+                                by <a href="/~{post.blog.author.username}">{post.blog.author.username}</a> in
+                                <a href="/~{post.blog.author.username}/{post.blog.url}">{post.blog.name}</a>
+                            </small>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="content">
-            <p>
-                Once upon a <mark>time</mark> there was a lovely princess. But
-                she had an enchantment upon her of a fearful sort which could
-                only be broken by love's first kiss. She was locked away in a
-                castle guarded by a terrible fire-breathing dragon. Many brave
-                knights had attempted to free her from this dreadful prison, but
-                non prevailed. She waited in the dragon's keep in the highest
-                room of the tallest tower for her true love and true love's
-                first kiss. (Laughs, tears out a page of the book) Like that's
-                ever gonna happen. What a load of - (toilet flush).
-            </p>
-
-            <p>
-                Lines of fairy tale creatures are put in chains and are led into
-                wagons by Duloc Guards. The Captain of the Duloc Guards sits at
-                a table paying people for bringing the fairytale creatures in.
-                Waiting in line is Donkey on a leash and his owner. Some of the
-                others in line include Peter Pan, who is carrying Tinkerbell in
-                a cage, Geppetto who is carrying Pinocchio, and a farmer
-                carrying the Three Little Pigs.
-            </p>
-        </div>
-
-        <span><a href="/">[continue reading]</a></span>
-    </article>
-
-    <article>
-        <div class="post-heading">
-            <div class="title">
-                <a href="/"><h3>Example post</h3></a>
-                <div class="meta">
-                    <small class="date">Published on 4. Jan 2022</small>
-                    <small class="posted-by">
-                        by <a href="/">CodeMyst</a> in
-                        <a href="/">CodeMyst's Blog</a>
-                    </small>
+                <div class="content">
+                    {@html convertToHtml(post.content)}
                 </div>
-            </div>
-        </div>
-
-        <div class="content">
-            <p>
-                Once upon a <mark>time</mark> there was a lovely princess. But
-                she had an enchantment upon her of a fearful sort which could
-                only be broken by love's first kiss. She was locked away in a
-                castle guarded by a terrible fire-breathing dragon. Many brave
-                knights had attempted to free her from this dreadful prison, but
-                non prevailed. She waited in the dragon's keep in the highest
-                room of the tallest tower for her true love and true love's
-                first kiss. (Laughs, tears out a page of the book) Like that's
-                ever gonna happen. What a load of - (toilet flush).
-            </p>
-
-            <p>
-                Lines of fairy tale creatures are put in chains and are led into
-                wagons by Duloc Guards. The Captain of the Duloc Guards sits at
-                a table paying people for bringing the fairytale creatures in.
-                Waiting in line is Donkey on a leash and his owner. Some of the
-                others in line include Peter Pan, who is carrying Tinkerbell in
-                a cage, Geppetto who is carrying Pinocchio, and a farmer
-                carrying the Three Little Pigs.
-            </p>
-        </div>
-
-        <span><a href="/">[continue reading]</a></span>
-    </article>
+            </article>
+        {/each}
+    {/await}
 </div>
 
 <style>
@@ -111,5 +115,22 @@
     .title .meta small {
         display: block;
         text-align: right;
+    }
+
+    .select-posts {
+        margin-bottom: 2rem;
+    }
+
+    .select-posts a {
+        margin-right: 0.5rem;
+        background-color: var(--nc-bg-2);
+        color: var(--nc-tx-1);
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+    }
+
+    .select-posts a.selected {
+        color: var(--nc-lk-1);
     }
 </style>

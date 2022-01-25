@@ -57,7 +57,7 @@ public class Blog {
         return Objects.hash(name, url, description);
     }
 
-    @JsonBackReference
+    @JsonManagedReference
     public User getAuthor() {
         return author;
     }

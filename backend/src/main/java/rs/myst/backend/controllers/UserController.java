@@ -14,7 +14,9 @@ import rs.myst.backend.repositories.BlogRepository;
 import rs.myst.backend.repositories.UserRepository;
 import rs.myst.backend.services.UserDetailsImpl;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user")
@@ -36,6 +38,20 @@ public class UserController {
         if (user.isEmpty()) return ResponseEntity.notFound().build();
 
         return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("/following")
+    @PreAuthorize(AuthConstants.USER_AUTH)
+    public ResponseEntity<?> getFollowedBlogs() {
+        UserDetailsImpl currentUserDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        User currentUser = userRepository.findByUsername(currentUserDetails.getUsername()).orElseThrow();
+
+        List<BlogFollow> followList = blogFollowRepository.findByIdUserUsername(currentUser.getUsername());
+
+        List<Blog> blogs = followList.stream().map(BlogFollow::getBlog).collect(Collectors.toList());
+
+        return ResponseEntity.ok(blogs);
     }
 
     @GetMapping("/follow/{username}/{blog}")

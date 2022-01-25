@@ -1,4 +1,5 @@
 import { API_BASE } from "./api";
+import type { Blog } from "./blog";
 
 export interface User {
     username: string;
@@ -41,4 +42,17 @@ export const toggleFollowBlog = async (author: string, blog: string) => {
             "Content-Type": "application/json"
         }
     });
+};
+
+export const getFollowedBlogs = async (): Promise<Blog[]> => {
+    const res = await fetch(`${API_BASE}/user/following`, {
+        method: "GET",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+
+    return await res.json();
 };

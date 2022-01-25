@@ -1,5 +1,6 @@
-import type Post__SvelteComponent_ from "../pages/Post/Post.svelte";
 import { API_BASE } from "./api";
+import type { Post } from "./post";
+import type { User } from "./user";
 
 export interface BlogCreateResult {
     success: boolean;
@@ -17,16 +18,7 @@ export interface Blog {
     url: string;
     name: string;
     description: string;
-}
-
-export interface Post {
-    url: string;
-    title: string;
-    content: string;
-    blog: Blog;
-    createdAt: Date;
-    lastEdit: Date;
-    upvotes: number;
+    author: User;
 }
 
 export const createBlog = async (name: string, description: string): Promise<BlogCreateResult> => {

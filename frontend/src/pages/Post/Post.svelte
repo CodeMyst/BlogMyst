@@ -4,7 +4,7 @@
     import { getUser, User } from "../../api/user";
     import showdown from "showdown";
     import { getUsername, isLoggedIn } from "../../api/auth";
-    import type { Post } from "../../api/post";
+    import { downvote, Post, upvote } from "../../api/post";
 
     export let params: { author: string; blog: string; post: string };
 
@@ -18,6 +18,8 @@
     let htmlContent: string;
 
     let isAuthor = false;
+
+    let loggedIn = false;
 
     onMount(async () => {
         post = await getPost(params.author, params.blog, params.post);
@@ -37,6 +39,7 @@
         if (await isLoggedIn()) {
             const currentUser = await getUsername();
             isAuthor = currentUser === author.username;
+            loggedIn = true;
         }
     });
 
@@ -45,12 +48,39 @@
             await deletePost(author.username, post.blog.url, post.url);
         }
     };
+
+    const onUpvote = async () => {
+        await upvote(author.username, post.blog.url, post.url);
+        post.upvotes++;
+    };
+
+    const onDownvote = async () => {
+        await downvote(author.username, post.blog.url, post.url);
+        post.upvotes--;
+    };
 </script>
 
 {#if found}
     <div class="title">
         <div class="row">
-            <h2>{post.title}</h2>
+            <div class="title-upvotes">
+                <div class="upvotes">
+                    <a href="/" on:click|preventDefault={() => onUpvote()}>
+                        ⇡
+                    </a>
+
+                    <div>
+                        {post.upvotes}
+                    </div>
+
+                    <a href="/" on:click|preventDefault={() => onDownvote()}>
+                        ⇣
+                    </a>
+                </div>
+
+                <h2>{post.title}</h2>
+            </div>
+
             {#if isAuthor}
                 <div class="edit-links">
                     <a href="/~{author.username}/{post.blog.url}/{post.url}/edit" class="edit">edit</a>
@@ -106,5 +136,24 @@
 
     .meta p {
         margin: 0;
+    }
+
+    .title-upvotes {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .title-upvotes .upvotes {
+        margin-right: 1rem;
+        text-align: center;
+    }
+
+    .title-upvotes h2 {
+        margin: 0;
+    }
+
+    .title-upvotes .upvotes a {
+        text-decoration: none;
     }
 </style>

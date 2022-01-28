@@ -44,3 +44,25 @@ export const getFollowedPosts = async (page: number): Promise<PostPage> => {
 
     return await res.json();
 };
+
+export const upvote = async (author: string, blog: string, post: string) => {
+    await fetch(`${API_BASE}/post/${author}/${blog}/${post}/upvote`, {
+        method: "post",
+        mode: "cors",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "include"
+    });
+};
+
+export const downvote = async (author: string, blog: string, post: string) => {
+    await fetch(`${API_BASE}/post/${author}/${blog}/${post}/downvote`, {
+        method: "post",
+        mode: "cors",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "include"
+    });
+};

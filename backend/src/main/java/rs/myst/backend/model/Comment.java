@@ -1,5 +1,8 @@
 package rs.myst.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -76,6 +79,7 @@ public class Comment {
         return Objects.hash(id, createdAt, lastEdit, content);
     }
 
+    @JsonManagedReference
     public User getAuthor() {
         return author;
     }
@@ -84,6 +88,7 @@ public class Comment {
         this.author = author;
     }
 
+    @JsonBackReference
     public Post getPost() {
         return post;
     }

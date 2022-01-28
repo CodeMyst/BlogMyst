@@ -1,6 +1,7 @@
 package rs.myst.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -25,9 +26,6 @@ public class User {
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Collection<Blog> blogs;
-
-    @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Collection<Comment> comments;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Collection<Report> reports;
@@ -60,6 +58,7 @@ public class User {
         this.role = role;
     }
 
+    @JsonIgnore
     public String getPasswordHash() {
         return passwordHash;
     }
@@ -88,14 +87,6 @@ public class User {
 
     public void setBlogs(Collection<Blog> blogs) {
         this.blogs = blogs;
-    }
-
-    public Collection<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(Collection<Comment> comments) {
-        this.comments = comments;
     }
 
     public Collection<Report> getReports() {

@@ -4,7 +4,7 @@
     import { getUser, User } from "../../api/user";
     import showdown from "showdown";
     import { getUsername, isLoggedIn } from "../../api/auth";
-    import { downvote, Post, upvote } from "../../api/post";
+    import { Comment, deleteComment, downvote, editComment, getComments, Page, Post, postComment, upvote } from "../../api/post";
 
     export let params: { author: string; blog: string; post: string };
 
@@ -20,6 +20,16 @@
     let isAuthor = false;
 
     let loggedIn = false;
+
+    let commentContent: string;
+
+    let commentsPage = 0;
+    let commentsPromise: Promise<Page<Comment>>;
+
+    let currentUser: string;
+
+    let editingComment: number;
+    let editingCommentContent: string;
 
     onMount(async () => {
         post = await getPost(params.author, params.blog, params.post);
@@ -37,10 +47,12 @@
         htmlContent = converter.makeHtml(post.content);
 
         if (await isLoggedIn()) {
-            const currentUser = await getUsername();
+            currentUser = await getUsername();
             isAuthor = currentUser === author.username;
             loggedIn = true;
         }
+
+        commentsPromise = getComments(author.username, post.blog.url, post.url, commentsPage);
     });
 
     const onDelete = async () => {
@@ -57,6 +69,54 @@
     const onDownvote = async () => {
         await downvote(author.username, post.blog.url, post.url);
         post.upvotes--;
+    };
+
+    const onPostComment = async () => {
+        await postComment(author.username, post.blog.url, post.url, commentContent);
+        commentContent = "";
+        commentsPage = 0;
+        commentsPromise = getComments(author.username, post.blog.url, post.url, commentsPage);
+        setTimeout(() => {window.scrollTo(0, document.body.scrollHeight);}, 50);
+    };
+
+    const prevPage = () => {
+        commentsPage--;
+        commentsPromise = getComments(author.username, post.blog.url, post.url, commentsPage);
+        setTimeout(() => {window.scrollTo(0, document.body.scrollHeight);}, 50);
+    };
+
+    const nextPage = () => {
+        commentsPage++;
+        commentsPromise = getComments(author.username, post.blog.url, post.url, commentsPage);
+        setTimeout(() => {window.scrollTo(0, document.body.scrollHeight);}, 50);
+    };
+
+    const onCommentDelete = async (id: number) => {
+        if (confirm("Are you sure you want to delete this comment?")) {
+            await deleteComment(id);
+            commentsPromise = getComments(author.username, post.blog.url, post.url, commentsPage);
+            setTimeout(() => {window.scrollTo(0, document.body.scrollHeight);}, 50);
+        }
+    };
+
+    const onCommentEdit = (id: number, content: string) => {
+        editingComment = id;
+        editingCommentContent = content;
+    };
+
+    const onCommentEditCancel = () => {
+        editingComment = null;
+        editingCommentContent = "";
+    };
+
+    const onCommentEditSave = async (id: number) => {
+        await editComment(id, editingCommentContent);
+
+        editingComment = null;
+        editingCommentContent = "";
+
+        commentsPromise = getComments(author.username, post.blog.url, post.url, commentsPage);
+        setTimeout(() => {window.scrollTo(0, document.body.scrollHeight);}, 50);
     };
 </script>
 
@@ -99,6 +159,66 @@
 
     <div class="content">
         {@html htmlContent}
+    </div>
+
+    <div class="comments">
+        <h4>Comments</h4>
+
+        {#if loggedIn}
+            <div class="post-comment-top">
+                <p>Post a comment</p>
+                <button on:click={() => onPostComment()}>Submit</button>
+            </div>
+            <textarea bind:value={commentContent} placeholder="Comment..." rows="4"></textarea>
+        {/if}
+
+        {#if commentsPromise !== undefined}
+            {#await commentsPromise then commentsPage}
+                {#each commentsPage.content as comment}
+                    <div class="comment" id="{comment.id.toString()}">
+                        {#if comment.id === editingComment}
+                            <textarea cols="4" bind:value={editingCommentContent}></textarea>
+                            <button on:click={() => onCommentEditCancel()}>Cancel</button>
+                            <button on:click={() => onCommentEditSave(comment.id)}>Submit</button>
+                        {:else}
+                            <div class="meta">
+                                Posted by <a href="/~{comment.author.username}">{comment.author.username}</a> on {new Date(comment.createdAt).toLocaleString()}
+
+                                {#if comment.lastEdit}
+                                    <br />Edited on {new Date(comment.lastEdit).toLocaleString()}
+                                {/if}
+                            </div>
+                            <p>{comment.content}</p>
+
+                            {#if currentUser === comment.author.username}
+                                <div class="comment-edit">
+                                    <a href="/" on:click|preventDefault={() => onCommentEdit(comment.id, comment.content)}>edit</a>
+                                    <a href="/" on:click|preventDefault={() => onCommentDelete(comment.id)}>delete</a>
+                                </div>
+                            {/if}
+                        {/if}
+                    </div>
+                {/each}
+
+                {#if commentsPage.content.length === 0}
+                    <p>There's no comments here yet.</p>
+                {/if}
+
+                {#if commentsPage.totalPages > 1}
+                    <div class="pager">
+                        {#if !commentsPage.first}
+                            <a href="/" on:click|preventDefault={() => prevPage()}>&laquo;</a>
+                        {/if}
+
+                        <span>page {commentsPage.number + 1}</span>
+
+                        {#if !commentsPage.last}
+                            <a href="/" on:click|preventDefault={() => nextPage()}>&raquo;</a>
+                        {/if}
+                    </div>
+                {/if}
+            {/await}
+        {/if}
     </div>
 {:else}
     <h2>Post not found</h2>
@@ -155,5 +275,44 @@
 
     .title-upvotes .upvotes a {
         text-decoration: none;
+    }
+
+    .comments {
+        border-top: 3px solid var(--nc-bg-2);
+        padding-bottom: 1rem;
+    }
+
+    .comments h4 {
+        margin-bottom: 1rem;
+    }
+
+    .comments textarea {
+        width: 100%;
+        margin-bottom: 1rem;
+        resize: none;
+        font-size: 1rem;
+    }
+
+    .comment {
+        background: var(--nc-bg-2);
+        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        margin-top: 1rem;
+    }
+
+    .post-comment-top {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .pager {
+        text-align: center;
+        margin-top: 0.5rem;
+    }
+
+    .comment-edit a {
+        margin-right: 0.5rem;
     }
 </style>

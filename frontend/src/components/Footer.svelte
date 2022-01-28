@@ -3,7 +3,7 @@
 </script>
 
 <footer>
-    copyright © <a href="https://myst.rs/">CodeMyst</a>
+    Copyright © <a href="https://myst.rs/">CodeMyst</a>
     {now} | <a href="https://github.com/codemyst/blogmyst">GitHub</a>
 </footer>
 

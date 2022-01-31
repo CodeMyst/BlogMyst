@@ -60,7 +60,7 @@ create table report
     date          datetime    not null,
     reason        text,
 
-    subject_id    int         not null,
+    subject_id    varchar(200) not null,
 
     constraint fk_report_user
         foreign key (user_username)

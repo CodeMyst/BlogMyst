@@ -26,7 +26,7 @@ public class Report {
 
     @Basic
     @Column(name = "subject_id")
-    private int subjectId;
+    private String subjectId;
 
     @ManyToOne
     @JoinColumn(name = "user_username", referencedColumnName = "username", nullable = false)
@@ -64,11 +64,11 @@ public class Report {
         this.reason = reason;
     }
 
-    public int getSubjectId() {
+    public String getSubjectId() {
         return subjectId;
     }
 
-    public void setSubjectId(int subjectId) {
+    public void setSubjectId(String subjectId) {
         this.subjectId = subjectId;
     }
 
@@ -77,7 +77,7 @@ public class Report {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Report report = (Report) o;
-        return id == report.id && subjectId == report.subjectId && Objects.equals(type, report.type) && Objects.equals(date, report.date) && Objects.equals(reason, report.reason);
+        return id == report.id && Objects.equals(subjectId, report.subjectId) && Objects.equals(type, report.type) && Objects.equals(date, report.date) && Objects.equals(reason, report.reason);
     }
 
     @Override

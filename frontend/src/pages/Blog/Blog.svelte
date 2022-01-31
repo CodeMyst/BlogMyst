@@ -3,7 +3,9 @@
     import { getUsername, isLoggedIn } from "../../api/auth";
     import { Blog, deleteBlog, editBlog, getBlog, getBlogPosts } from "../../api/blog";
     import type { Post } from "../../api/post";
+    import { reportBlog } from "../../api/report";
     import { getUser, isFollowingBlog, toggleFollowBlog, User } from "../../api/user";
+    import Report from "../../components/Report.svelte";
 
     export let params: { author: string; blog: string };
 
@@ -19,6 +21,8 @@
     let posts: Post[] = [];
 
     let isFollowing = false;
+
+    let reportVisible = false;
 
     onMount(async () => {
         blog = await getBlog(params.author, params.blog);
@@ -53,6 +57,14 @@
         toggleFollowBlog(author.username, blog.url);
         isFollowing = !isFollowing;
     };
+
+    const onReportClick = () => {
+        reportVisible = true;
+    };
+
+    const onReportSubmit = async (event: CustomEvent) => {
+        await reportBlog(author.username, blog.url, event.detail.reason);
+    };
 </script>
 
 {#if found}
@@ -68,6 +80,8 @@
                     {:else}
                         <a href="/" on:click|preventDefault={onFollow}>+ follow</a>
                     {/if}
+                    <span class="separator">|</span>
+                    <a href="/" on:click|preventDefault={onReportClick}>report</a>
                 {/if}
             </div>
         {/if}
@@ -118,6 +132,10 @@
 
 {:else}
     <h2>Blog not found</h2>
+{/if}
+
+{#if loggedIn}
+    <Report bind:visible={reportVisible} on:report={onReportSubmit} />
 {/if}
 
 <style>
@@ -209,5 +227,10 @@
 
     .post .meta p:last-child::after {
         content: '';
+    }
+
+    .separator {
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
     }
 </style>

@@ -28,9 +28,6 @@ public class User {
     private Collection<Blog> blogs;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Collection<Report> reports;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Collection<BlogFollow> follows = new ArrayList<>();
 
     @JsonManagedReference
@@ -87,13 +84,5 @@ public class User {
 
     public void setBlogs(Collection<Blog> blogs) {
         this.blogs = blogs;
-    }
-
-    public Collection<Report> getReports() {
-        return reports;
-    }
-
-    public void setReports(Collection<Report> reports) {
-        this.reports = reports;
     }
 }

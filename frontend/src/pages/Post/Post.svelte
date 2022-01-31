@@ -5,6 +5,8 @@
     import showdown from "showdown";
     import { getUsername, isLoggedIn } from "../../api/auth";
     import { Comment, deleteComment, downvote, editComment, getComments, Page, Post, postComment, upvote } from "../../api/post";
+import Report from "../../components/Report.svelte";
+import { reportPost } from "../../api/report";
 
     export let params: { author: string; blog: string; post: string };
 
@@ -30,6 +32,8 @@
 
     let editingComment: number;
     let editingCommentContent: string;
+
+    let reportVisible = false;
 
     onMount(async () => {
         post = await getPost(params.author, params.blog, params.post);
@@ -118,6 +122,14 @@
         commentsPromise = getComments(author.username, post.blog.url, post.url, commentsPage);
         setTimeout(() => {window.scrollTo(0, document.body.scrollHeight);}, 50);
     };
+
+    const onReportClick = () => {
+        reportVisible = true;
+    };
+
+    const onReportSubmit = async (event: CustomEvent) => {
+        await reportPost(author.username, post.blog.url, post.url, event.detail.reason);
+    };
 </script>
 
 {#if found}
@@ -141,10 +153,13 @@
                 <h2>{post.title}</h2>
             </div>
 
-            {#if isAuthor}
+            {#if loggedIn}
                 <div class="edit-links">
-                    <a href="/~{author.username}/{post.blog.url}/{post.url}/edit" class="edit">edit</a>
-                    <a href="/" on:click={onDelete} class="delete">delete</a>
+                    {#if isAuthor}
+                        <a href="/~{author.username}/{post.blog.url}/{post.url}/edit" class="edit">edit</a>
+                        <a href="/" on:click={onDelete} class="delete">delete</a>
+                    {/if}
+                    <a href="/" on:click|preventDefault={onReportClick}>report</a>
                 </div>
             {/if}
         </div>
@@ -224,6 +239,10 @@
     <h2>Post not found</h2>
 {/if}
 
+{#if loggedIn}
+    <Report bind:visible={reportVisible} on:report={onReportSubmit} />
+{/if}
+
 <style>
     h2 {
         border-bottom: none;
@@ -247,6 +266,10 @@
 
     .title .row .delete {
         color: var(--nc-red);
+    }
+
+    .title .row .edit-links a:last-child {
+        margin-left: 1rem;
     }
 
     .meta {

@@ -6,7 +6,7 @@
     import { getUsername, isLoggedIn } from "../../api/auth";
     import { Comment, deleteComment, downvote, editComment, getComments, Page, Post, postComment, upvote } from "../../api/post";
 import Report from "../../components/Report.svelte";
-import { reportPost } from "../../api/report";
+import { reportComment, reportPost } from "../../api/report";
 
     export let params: { author: string; blog: string; post: string };
 
@@ -33,7 +33,9 @@ import { reportPost } from "../../api/report";
     let editingComment: number;
     let editingCommentContent: string;
 
-    let reportVisible = false;
+    let reportPostVisible = false;
+    let reportCommentVisible = false;
+    let reportCommentId: number;
 
     onMount(async () => {
         post = await getPost(params.author, params.blog, params.post);
@@ -123,12 +125,21 @@ import { reportPost } from "../../api/report";
         setTimeout(() => {window.scrollTo(0, document.body.scrollHeight);}, 50);
     };
 
-    const onReportClick = () => {
-        reportVisible = true;
+    const onReportPostClick = () => {
+        reportPostVisible = true;
     };
 
-    const onReportSubmit = async (event: CustomEvent) => {
+    const onReportPostSubmit = async (event: CustomEvent) => {
         await reportPost(author.username, post.blog.url, post.url, event.detail.reason);
+    };
+
+    const onReportCommentClick = (id: number) => {
+        reportCommentVisible = true;
+        reportCommentId = id;
+    };
+
+    const onReportCommentSubmit = async (event: CustomEvent) => {
+        await reportComment(reportCommentId, event.detail.reason);
     };
 </script>
 
@@ -159,7 +170,7 @@ import { reportPost } from "../../api/report";
                         <a href="/~{author.username}/{post.blog.url}/{post.url}/edit" class="edit">edit</a>
                         <a href="/" on:click={onDelete} class="delete">delete</a>
                     {/if}
-                    <a href="/" on:click|preventDefault={onReportClick}>report</a>
+                    <a href="/" on:click|preventDefault={onReportPostClick}>report</a>
                 </div>
             {/if}
         </div>
@@ -205,12 +216,16 @@ import { reportPost } from "../../api/report";
                             </div>
                             <p>{comment.content}</p>
 
-                            {#if currentUser === comment.author.username}
-                                <div class="comment-edit">
+                            <div class="comment-edit">
+                                {#if currentUser === comment.author.username}
                                     <a href="/" on:click|preventDefault={() => onCommentEdit(comment.id, comment.content)}>edit</a>
                                     <a href="/" on:click|preventDefault={() => onCommentDelete(comment.id)}>delete</a>
-                                </div>
-                            {/if}
+                                {/if}
+
+                                {#if loggedIn}
+                                    <a href="/" on:click|preventDefault={() => onReportCommentClick(comment.id)}>report</a>
+                                {/if}
+                            </div>
                         {/if}
                     </div>
                 {/each}
@@ -240,7 +255,8 @@ import { reportPost } from "../../api/report";
 {/if}
 
 {#if loggedIn}
-    <Report bind:visible={reportVisible} on:report={onReportSubmit} />
+    <Report bind:visible={reportPostVisible} on:report={onReportPostSubmit} />
+    <Report bind:visible={reportCommentVisible} on:report={onReportCommentSubmit} />
 {/if}
 
 <style>

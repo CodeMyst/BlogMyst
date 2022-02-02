@@ -118,8 +118,12 @@ public class PostController {
 
         if (comment.isEmpty()) return ResponseEntity.notFound().build();
 
-        if (!comment.get().getAuthor().getUsername().equals(userDetails.getUsername())) {
-            return new ResponseEntity<>(new MessageResponse("Can't modify someone else's comment."), HttpStatus.UNAUTHORIZED);
+        User currentUser = userRepository.findByUsername(userDetails.username()).orElseThrow();
+
+        if (currentUser.getRole() != UserRole.ADMIN && currentUser.getRole() != UserRole.MOD) {
+            if (!comment.get().getAuthor().getUsername().equals(userDetails.getUsername())) {
+                return new ResponseEntity<>(new MessageResponse("Can't modify someone else's comment."), HttpStatus.UNAUTHORIZED);
+            }
         }
 
         commentRepository.deleteById(id);

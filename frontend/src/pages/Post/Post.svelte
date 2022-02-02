@@ -228,6 +228,9 @@
                             <div class="comment-edit">
                                 {#if currentUser.username === comment.author.username}
                                     <a href="/" on:click|preventDefault={() => onCommentEdit(comment.id, comment.content)}>edit</a>
+                                {/if}
+
+                                {#if currentUser.username === comment.author.username || isMod}
                                     <a href="/" on:click|preventDefault={() => onCommentDelete(comment.id)}>delete</a>
                                 {/if}
 

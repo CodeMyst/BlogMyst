@@ -1,9 +1,10 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { getUsername } from "../../api/auth";
+    import { getUser } from "../../api/auth";
     import { BlogCreateResult, createBlog } from "../../api/blog";
+    import type { User } from "../../api/user";
 
-    let currentUsername: string;
+    let currentUser: User;
 
     let name: string;
     let description: string;
@@ -11,7 +12,7 @@
     let res: BlogCreateResult | null = null;
 
     onMount(async () => {
-        currentUsername = await getUsername();
+        currentUser= await getUser();
     });
 
     const onSubmit = async () => {
@@ -23,7 +24,7 @@
 
 {#if res && res.success}
     <div class="status-message success">
-        Successfully created the blog. You can view it at: <a href="/~{currentUsername}/{res.url}">/~{currentUsername}/{res.url}</a>.
+        Successfully created the blog. You can view it at: <a href="/~{currentUser.username}/{res.url}">/~{currentUser.username}/{res.url}</a>.
     </div>
 {:else if res && !res.success}
     <div class="status-message error">

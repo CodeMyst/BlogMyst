@@ -3,10 +3,10 @@
     import { deletePost, getPost } from "../../api/blog";
     import { getUser, User } from "../../api/user";
     import showdown from "showdown";
-    import { getUsername, isLoggedIn } from "../../api/auth";
+    import { getUser as getCurrentUser, isLoggedIn } from "../../api/auth";
     import { Comment, deleteComment, downvote, editComment, getComments, Page, Post, postComment, upvote } from "../../api/post";
-import Report from "../../components/Report.svelte";
-import { reportComment, reportPost } from "../../api/report";
+    import Report from "../../components/Report.svelte";
+    import { reportComment, reportPost } from "../../api/report";
 
     export let params: { author: string; blog: string; post: string };
 
@@ -53,7 +53,7 @@ import { reportComment, reportPost } from "../../api/report";
         htmlContent = converter.makeHtml(post.content);
 
         if (await isLoggedIn()) {
-            currentUser = await getUsername();
+            currentUser = (await getCurrentUser()).username;
             isAuthor = currentUser === author.username;
             loggedIn = true;
         }

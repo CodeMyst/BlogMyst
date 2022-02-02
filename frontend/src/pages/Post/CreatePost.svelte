@@ -4,7 +4,7 @@
 
 <script lang="ts">
     import { onMount, tick } from "svelte";
-    import { getUsername } from "../../api/auth";
+    import { getUser} from "../../api/auth";
     import { Blog, createPost, getBlogs, PostCreateResult } from "../../api/blog";
 
     let blogs: Blog[];
@@ -19,7 +19,7 @@
     let editor: any;
 
     onMount(async () => {
-        currentUsername = await getUsername();
+        currentUsername = (await getUser()).username;
         blogs = await getBlogs(currentUsername);
 
         await tick();

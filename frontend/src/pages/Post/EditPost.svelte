@@ -4,10 +4,11 @@
 
 <script lang="ts">
     import { onMount, tick } from "svelte";
-    import { editPost, getPost, Post, PostCreateResult } from "../../api/blog";
+    import { editPost, getPost, PostCreateResult } from "../../api/blog";
     import { getUser, User } from "../../api/user";
     import showdown from "showdown";
-    import { getUsername } from "../../api/auth";
+    import { getUser as getCurrentUser } from "../../api/auth";
+    import type { Post } from "../../api/post";
 
     export let params: { author: string; blog: string; post: string };
 
@@ -38,7 +39,7 @@
         const converter = new showdown.Converter();
         htmlContent = converter.makeHtml(post.content);
 
-        const currentUser = await getUsername();
+        const currentUser = (await getCurrentUser()).username;
         isAuthor = currentUser === author.username;
 
         if (!isAuthor) return;

@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { getUsername, isLoggedIn } from "../../api/auth";
+    import { getUser as getCurrentUser, isLoggedIn } from "../../api/auth";
     import { Blog, getBlogs } from "../../api/blog";
     import { getUser, User } from "../../api/user";
 
@@ -15,7 +15,7 @@
         user = await getUser(params.user);
 
         if (await isLoggedIn()) {
-            currentUser = await getUsername();
+            currentUser = (await getCurrentUser()).username;
         }
 
         if (user === null) return;
@@ -27,7 +27,15 @@
 {#if user === null}
     <h2>User not found</h2>
 {:else}
-    <h2>{user.username}</h2>
+    <h2>
+        {user.username}
+        {#if user.role === "ADMIN"}
+            <span class="admin">[A]</span>
+        {/if}
+        {#if user.role === "MOD"}
+            <span class="mod">[M]</span>
+        {/if}
+    </h2>
 
     {#if blogs.length === 0}
         {#if currentUser === user.username}
@@ -60,5 +68,13 @@
 
     .blog p {
         margin-bottom: 0;
+    }
+
+    .admin {
+        color: var(--nc-ac-1);
+    }
+
+    .mod {
+        color: var(--nc-red);
     }
 </style>

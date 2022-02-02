@@ -86,8 +86,8 @@ public class AuthController {
                 .body(new MessageResponse("You've been logged out."));
     }
 
-    @GetMapping("/username")
-    public ResponseEntity<Map<String, String>> getUsername() {
+    @GetMapping("/user")
+    public ResponseEntity<?> getUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth instanceof AnonymousAuthenticationToken) {
@@ -96,9 +96,6 @@ public class AuthController {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
 
-        Map<String, String> res = new HashMap<>();
-        res.put("username", userDetails.getUsername());
-
-        return new ResponseEntity<>(res, HttpStatus.OK);
+        return ResponseEntity.ok(userRepository.findByUsername(userDetails.username()));
     }
 }

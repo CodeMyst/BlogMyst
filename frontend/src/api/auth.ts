@@ -1,4 +1,5 @@
 import { API_BASE } from "./api";
+import type { User } from "./user";
 
 export interface AuthResult {
     success: boolean;
@@ -73,7 +74,7 @@ export const logout = async () => {
 };
 
 export const isLoggedIn = async (): Promise<boolean> => {
-    const res = await fetch(`${API_BASE}/auth/username`, {
+    const res = await fetch(`${API_BASE}/auth/user`, {
         method: "GET",
         mode: "cors",
         headers: {
@@ -85,8 +86,8 @@ export const isLoggedIn = async (): Promise<boolean> => {
     return res.ok;
 };
 
-export const getUsername = async (): Promise<string> => {
-    const res = await fetch(`${API_BASE}/auth/username`, {
+export const getUser= async (): Promise<User> => {
+    const res = await fetch(`${API_BASE}/auth/user`, {
         method: "GET",
         mode: "cors",
         headers: {
@@ -95,5 +96,5 @@ export const getUsername = async (): Promise<string> => {
         credentials: "include"
     });
 
-    return (await res.json()).username;
+    return await res.json();
 };

@@ -1,7 +1,8 @@
 <script lang="ts">
     import { logout } from "../api/auth";
+    import type { User } from "../api/user";
 
-    export let username: string | null;
+    export let user: User | null;
 
     const onLogout = async () => {
         await logout();
@@ -16,8 +17,16 @@
         </ul>
 
         <ul>
-            {#if username}
-                <li><a href="/~{username}">{username}</a></li>
+            {#if user}
+                <li>
+                    <a href="/~{user.username}">{user.username}</a>
+                    {#if user.role === "ADMIN"}
+                        <span class="admin">[A]</span>
+                    {/if}
+                    {#if user.role === "MOD"}
+                        <span class="mod">[M]</span>
+                    {/if}
+                </li>
                 <!-- TODO: just a temporary place for a new blog link -->
                 <li><a href="/new/blog">New Blog</a></li>
                 <li><a href="/new/post">New Post</a></li>
@@ -50,5 +59,13 @@
 
     nav ul:nth-child(2) li {
         margin-left: 1rem;
+    }
+
+    .admin {
+        color: var(--nc-ac-1);
+    }
+
+    .mod {
+        color: var(--nc-red);
     }
 </style>

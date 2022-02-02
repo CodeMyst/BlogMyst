@@ -7,13 +7,14 @@
     import Login from "./pages/Login.svelte";
     import Register from "./pages/Register.svelte";
     import { onMount } from "svelte";
-    import { getUsername, isLoggedIn } from "./api/auth";
+    import { getUser, isLoggedIn } from "./api/auth";
     import CreateBlog from "./pages/Blog/CreateBlog.svelte";
     import Blog from "./pages/Blog/Blog.svelte";
     import CreatePost from "./pages/Post/CreatePost.svelte";
     import Post from "./pages/Post/Post.svelte";
     import EditPost from "./pages/Post/EditPost.svelte";
     import User from "./pages/User/User.svelte";
+    import type { User as UserObj } from "./api/user";
 
     let page: any;
     let params: any;
@@ -61,19 +62,19 @@
 
     router.start();
 
-    let username: string | null = null;
+    let user: UserObj | null = null;
 
     onMount(async () => {
         const loggedIn = await isLoggedIn();
 
         if (loggedIn) {
-            username = await getUsername();
+            user = await getUser();
         }
     });
 </script>
 
 <main>
-    <Header {username} />
+    <Header {user} />
 
     <svelte:component this={page} {params} />
 

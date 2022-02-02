@@ -37,6 +37,9 @@
     let reportCommentVisible = false;
     let reportCommentId: number;
 
+    let targetCommentId: number;
+    targetCommentId = parseInt(window.location.hash.slice(1));
+
     onMount(async () => {
         post = await getPost(params.author, params.blog, params.post);
         author = await getUser(params.author);
@@ -201,14 +204,14 @@
         {#if commentsPromise !== undefined}
             {#await commentsPromise then commentsPage}
                 {#each commentsPage.content as comment}
-                    <div class="comment" id="{comment.id.toString()}">
+                    <div class="comment" id="{comment.id.toString()}" class:target={comment.id === targetCommentId}>
                         {#if comment.id === editingComment}
                             <textarea cols="4" bind:value={editingCommentContent}></textarea>
                             <button on:click={() => onCommentEditCancel()}>Cancel</button>
                             <button on:click={() => onCommentEditSave(comment.id)}>Submit</button>
                         {:else}
                             <div class="meta">
-                                Posted by <a href="/~{comment.author.username}">{comment.author.username}</a> on {new Date(comment.createdAt).toLocaleString()}
+                                #{comment.id} | Posted by <a href="/~{comment.author.username}">{comment.author.username}</a> on {new Date(comment.createdAt).toLocaleString()}
 
                                 {#if comment.lastEdit}
                                     <br />Edited on {new Date(comment.lastEdit).toLocaleString()}
@@ -337,6 +340,10 @@
         border-radius: 4px;
         padding: 0.5rem 1rem;
         margin-top: 1rem;
+    }
+
+    .comment.target {
+        border: 2px solid var(--nc-lk-1);
     }
 
     .post-comment-top {

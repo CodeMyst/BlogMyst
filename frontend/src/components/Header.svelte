@@ -27,7 +27,11 @@
                         <span class="mod">[M]</span>
                     {/if}
                 </li>
-                <!-- TODO: just a temporary place for a new blog link -->
+
+                {#if user.role === "ADMIN" || user.role === "MOD"}
+                    <li><a href="/mod/reports">View Reports</a></li>
+                {/if}
+
                 <li><a href="/new/blog">New Blog</a></li>
                 <li><a href="/new/post">New Post</a></li>
                 <li><a href="/" on:click={onLogout}>Logout</a></li>

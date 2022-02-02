@@ -18,4 +18,6 @@ public interface PostRepository extends JpaRepository<Post, String> {
     List<Post> findByBlog(Blog blog);
 
     Page<Post> findByBlogIn(Set<Blog> blogs, Pageable pageable);
+
+    List<Post> findByTitleContainingIgnoreCase(String title);
 }

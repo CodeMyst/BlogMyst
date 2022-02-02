@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -174,5 +175,10 @@ public class PostController {
         postRepository.save(newPost);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{search}")
+    public ResponseEntity<?> searchPosts(@PathVariable String search) {
+        return ResponseEntity.ok(postRepository.findByTitleContainingIgnoreCase(search));
     }
 }

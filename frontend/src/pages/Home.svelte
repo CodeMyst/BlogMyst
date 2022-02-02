@@ -2,16 +2,18 @@
     import Showdown from "showdown";
     import { onMount } from "svelte";
     import { isLoggedIn } from "../api/auth";
-    import { getAllPosts, getFollowedPosts } from "../api/post";
+    import { getAllPosts, getFollowedPosts, searchPosts } from "../api/post";
     import { getFollowedBlogs } from "../api/user";
 
     let loggedIn: boolean = false;
-    let viewFollowed: boolean = false;
+    let view: number = 0;
 
     let allPostsPage = 0;
     let followedPostsPage = 0;
 
     let postsPromise = getAllPosts(allPostsPage);
+
+    let search: string;
 
     onMount(async () => {
         loggedIn = await isLoggedIn();
@@ -22,44 +24,61 @@
         return converter.makeHtml(content);
     };
 
-    const toggleViewFollowed = (v: boolean) => {
-        viewFollowed = v;
-        postsPromise = viewFollowed ? getFollowedPosts(followedPostsPage) : getAllPosts(allPostsPage);
+    const setView = (v: number) => {
+        view = v;
+
+        switch (view) {
+            case 0: postsPromise = getAllPosts(allPostsPage); break;
+            case 1: postsPromise = getFollowedPosts(followedPostsPage); break;
+            case 2: postsPromise = searchPosts(search); break;
+            default: break;
+        }
     };
 
     const prevPage = () => {
-        if (viewFollowed) {
+        if (view === 1) {
             followedPostsPage--;
         } else {
             allPostsPage--;
         }
-        postsPromise = viewFollowed ? getFollowedPosts(followedPostsPage) : getAllPosts(allPostsPage);
+
+        postsPromise = view === 1 ? getFollowedPosts(followedPostsPage) : getAllPosts(allPostsPage);
         window.scrollTo(0, 0);
     };
 
     const nextPage = () => {
-        if (viewFollowed) {
+        if (view === 1) {
             followedPostsPage++;
         } else {
             allPostsPage++;
         }
-        postsPromise = viewFollowed ? getFollowedPosts(followedPostsPage) : getAllPosts(allPostsPage);
+
+        postsPromise = view === 1 ? getFollowedPosts(followedPostsPage) : getAllPosts(allPostsPage);
         window.scrollTo(0, 0);
     };
 </script>
 
-{#if loggedIn}
-<div class="select-posts">
-    <a href="/" class:selected={!viewFollowed} on:click|preventDefault={() => toggleViewFollowed(false)}>all blogs</a>
-    <a href="/" class:selected={viewFollowed} on:click|preventDefault={() => toggleViewFollowed(true)}>followed blogs</a>
+<div class="top">
+    {#if loggedIn}
+        <div class="select-posts">
+            <a href="/" class:selected={view === 0} on:click|preventDefault={() => setView(0)}>all blogs</a>
+            <a href="/" class:selected={view === 1} on:click|preventDefault={() => setView(1)}>followed blogs</a>
+        </div>
+    {/if}
+
+    <div class="search">
+        <form on:submit|preventDefault={() => setView(2)}>
+            <input type="text" placeholder="Search..." bind:value={search} />
+            <input type="submit" value="Search">
+        </form>
+    </div>
 </div>
-{/if}
 
 <div class="feed">
     {#await postsPromise}
         <p>Loading posts...</p>
     {:then posts} 
-        {#if viewFollowed}
+        {#if view === 1}
             {#await getFollowedBlogs() then followed}
                 {#if followed.length === 0}
                     <p>You aren't following any blogs.</p>
@@ -109,7 +128,7 @@
 
         {#if posts.totalPages > 1}
             <div class="pager">
-                {#if !posts.first}
+                {#if !posts.first }
                     <a href="/" on:click|preventDefault={() => prevPage()}>&laquo;</a>
                 {/if}
 
@@ -154,10 +173,6 @@
         text-align: right;
     }
 
-    .select-posts {
-        margin-bottom: 2rem;
-    }
-
     .select-posts a {
         margin-right: 0.5rem;
         background-color: var(--nc-bg-2);
@@ -174,5 +189,27 @@
     .pager {
         text-align: center;
         margin-bottom: 1rem;
+    }
+
+    .top {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .top input {
+        padding: 0.5rem 1rem;
+        margin: 0;
+        margin-right: 0.5rem;
+    }
+
+    form {
+        margin-bottom: 0;
+    }
+
+    .top input[type=submit] {
+        margin: 0;
     }
 </style>

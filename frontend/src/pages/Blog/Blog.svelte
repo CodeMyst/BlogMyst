@@ -24,6 +24,9 @@
 
     let reportVisible = false;
 
+    let currentUser: User;
+    let isAdmin = false;
+
     onMount(async () => {
         blog = await getBlog(params.author, params.blog);
         author = await getUser(params.author);
@@ -35,8 +38,10 @@
         loggedIn = await isLoggedIn();
 
         if (loggedIn) {
-            isAuthor = (await getCurrentUser()).username === author.username;
+            currentUser = await getCurrentUser();
+            isAuthor = currentUser.username === author.username;
             isFollowing = await isFollowingBlog(author.username, blog.url);
+            isAdmin = currentUser.role === "ADMIN";
         }
 
         posts = await getBlogPosts(author.username, blog.url);
@@ -94,16 +99,19 @@
                 <p>{blog.description}</p>
             {/if}
 
-            {#if isAuthor}
-                <div>
+            <div>
+                {#if isAuthor}
                     {#if !editing}
                         <a href="/" class="edit" on:click|preventDefault={() => editing = true}>edit</a>
                     {:else}
                         <a href="/" class="save" on:click|preventDefault={saveBlogMeta}>save</a>
                     {/if}
+                {/if}
+
+                {#if isAuthor || isAdmin}
                     <a href="/" class="delete" on:click={onDeleteBlog}>delete</a>
-                </div>
-            {/if}
+                {/if}
+            </div>
         </div>
     </div>
 

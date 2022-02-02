@@ -28,6 +28,9 @@ public class Blog {
     @OneToMany(mappedBy = "blog", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Collection<Post> posts;
 
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Collection<BlogFollow> followers;
+
     public String getName() {
         return name;
     }

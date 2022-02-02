@@ -112,9 +112,12 @@ public class BlogController {
         }
 
         UserDetailsImpl currentUser = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUserObj = userRepository.findByUsername(currentUser.getUsername()).orElseThrow();
 
-        if (!currentUser.getUsername().equals(author)) {
-            return new ResponseEntity<>(new MessageResponse("Can't modify a blog for a different user."), HttpStatus.UNAUTHORIZED);
+        if (currentUserObj.getRole() != UserRole.ADMIN) {
+            if (!currentUser.getUsername().equals(author)) {
+                return new ResponseEntity<>(new MessageResponse("Can't modify a blog for a different user."), HttpStatus.UNAUTHORIZED);
+            }
         }
 
         if (!blogRepository.existsByUrlAndAuthorUsername(url, author)) {

@@ -11,6 +11,7 @@ import rs.myst.backend.constants.AuthConstants;
 import rs.myst.backend.model.Blog;
 import rs.myst.backend.model.Post;
 import rs.myst.backend.model.User;
+import rs.myst.backend.model.UserRole;
 import rs.myst.backend.payload.BlogCreateInfo;
 import rs.myst.backend.payload.MessageResponse;
 import rs.myst.backend.payload.PostCreateInfo;
@@ -240,6 +241,12 @@ public class BlogController {
         }
 
         UserDetailsImpl currentUser = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        User currentUserObj = userRepository.findByUsername(currentUser.getUsername()).orElseThrow();
+
+        if (currentUserObj.getRole() == UserRole.MOD || currentUserObj.getRole() == UserRole.ADMIN) {
+            return Optional.empty();
+        }
 
         if (!currentUser.getUsername().equals(author)) {
             return Optional.of(new ResponseEntity<>(new MessageResponse("Can't modify a blog post of a different user."), HttpStatus.UNAUTHORIZED));

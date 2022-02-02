@@ -7,6 +7,7 @@
     import { Comment, deleteComment, downvote, editComment, getComments, Page, Post, postComment, upvote } from "../../api/post";
     import Report from "../../components/Report.svelte";
     import { reportComment, reportPost } from "../../api/report";
+    import type { User as UserObj } from "../../api/user";
 
     export let params: { author: string; blog: string; post: string };
 
@@ -28,7 +29,7 @@
     let commentsPage = 0;
     let commentsPromise: Promise<Page<Comment>>;
 
-    let currentUser: string;
+    let currentUser: UserObj;
 
     let editingComment: number;
     let editingCommentContent: string;
@@ -39,6 +40,8 @@
 
     let targetCommentId: number;
     targetCommentId = parseInt(window.location.hash.slice(1));
+
+    let isMod: boolean;
 
     onMount(async () => {
         post = await getPost(params.author, params.blog, params.post);
@@ -56,8 +59,9 @@
         htmlContent = converter.makeHtml(post.content);
 
         if (await isLoggedIn()) {
-            currentUser = (await getCurrentUser()).username;
-            isAuthor = currentUser === author.username;
+            currentUser = (await getCurrentUser());
+            isAuthor = currentUser.username === author.username;
+            isMod = currentUser.role === "ADMIN" || currentUser.role === "MOD";
             loggedIn = true;
         }
 
@@ -171,6 +175,8 @@
                 <div class="edit-links">
                     {#if isAuthor}
                         <a href="/~{author.username}/{post.blog.url}/{post.url}/edit" class="edit">edit</a>
+                    {/if}
+                    {#if isAuthor || isMod}
                         <a href="/" on:click={onDelete} class="delete">delete</a>
                     {/if}
                     <a href="/" on:click|preventDefault={onReportPostClick}>report</a>
@@ -220,7 +226,7 @@
                             <p>{comment.content}</p>
 
                             <div class="comment-edit">
-                                {#if currentUser === comment.author.username}
+                                {#if currentUser.username === comment.author.username}
                                     <a href="/" on:click|preventDefault={() => onCommentEdit(comment.id, comment.content)}>edit</a>
                                     <a href="/" on:click|preventDefault={() => onCommentDelete(comment.id)}>delete</a>
                                 {/if}

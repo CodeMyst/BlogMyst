@@ -57,3 +57,15 @@ export const getFollowedBlogs = async (): Promise<Blog[]> => {
 
     return await res.json();
 };
+
+export const setUserRole = async (user: string, role: string) => {
+    await fetch(`${API_BASE}/user/${user}`, {
+        method: "PATCH",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(role)
+    });
+};

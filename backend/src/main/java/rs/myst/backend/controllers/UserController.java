@@ -5,10 +5,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import rs.myst.backend.constants.AuthConstants;
-import rs.myst.backend.model.Blog;
-import rs.myst.backend.model.BlogFollow;
-import rs.myst.backend.model.BlogFollowId;
-import rs.myst.backend.model.User;
+import rs.myst.backend.model.*;
 import rs.myst.backend.repositories.BlogFollowRepository;
 import rs.myst.backend.repositories.BlogRepository;
 import rs.myst.backend.repositories.UserRepository;
@@ -99,6 +96,20 @@ public class UserController {
 
             blogFollowRepository.save(follow);
         }
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{username}")
+    @PreAuthorize(AuthConstants.ADMIN_AUTH)
+    public ResponseEntity<?> patchUserRole(@PathVariable String username, @RequestBody UserRole role) {
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isEmpty()) return ResponseEntity.notFound().build();
+
+        user.get().setRole(role);
+
+        userRepository.save(user.get());
 
         return ResponseEntity.ok().build();
     }

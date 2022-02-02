@@ -1,44 +1,68 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { onMount, tick } from "svelte";
     import { getUser as getCurrentUser, isLoggedIn } from "../../api/auth";
     import { Blog, getBlogs } from "../../api/blog";
-    import { getUser, User } from "../../api/user";
+    import { getUser, setUserRole, User } from "../../api/user";
 
     export let params: { user: string; };
 
     let user: User = null;
     let blogs: Blog[] = [];
 
-    let currentUser: string;
+    let currentUser: User;
+    let isAdmin = false;
+
+    let selectedRole: string;
 
     onMount(async () => {
         user = await getUser(params.user);
 
         if (await isLoggedIn()) {
-            currentUser = (await getCurrentUser()).username;
+            currentUser = await getCurrentUser();
+            isAdmin = currentUser.role === "ADMIN";
         }
 
         if (user === null) return;
 
+        selectedRole = user.role;
+
         blogs = await getBlogs(params.user);
     });
+
+    const onRoleChange = async () => {
+        await tick();
+
+        await setUserRole(user.username, selectedRole);
+
+        location.reload();
+    };
 </script>
 
 {#if user === null}
     <h2>User not found</h2>
 {:else}
     <h2>
-        {user.username}
-        {#if user.role === "ADMIN"}
-            <span class="admin">[A]</span>
-        {/if}
-        {#if user.role === "MOD"}
-            <span class="mod">[M]</span>
+        <div>
+            {user.username}
+            {#if user.role === "ADMIN"}
+                <span class="admin">[A]</span>
+            {/if}
+            {#if user.role === "MOD"}
+                <span class="mod">[M]</span>
+            {/if}
+        </div>
+
+        {#if isAdmin}
+            <select name="role" on:change={onRoleChange} bind:value={selectedRole}>
+                <option value="ADMIN">Admin</option>
+                <option value="MOD">Mod</option>
+                <option value="USER">User</option>
+            </select>
         {/if}
     </h2>
 
     {#if blogs.length === 0}
-        {#if currentUser === user.username}
+        {#if currentUser?.username === user.username}
             <p>You don't have any blogs. Create one <a href="/new/blog">here</a>.</p>
         {:else}
             <p>This user has no blogs.</p>
@@ -76,5 +100,12 @@
 
     .mod {
         color: var(--nc-red);
+    }
+
+    h2 {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
     }
 </style>

@@ -69,3 +69,14 @@ export const setUserRole = async (user: string, role: string) => {
         body: JSON.stringify(role)
     });
 };
+
+export const deleteUser = async (user: string) => {
+    await fetch(`${API_BASE}/user/${user}`, {
+        method: "DELETE",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+};

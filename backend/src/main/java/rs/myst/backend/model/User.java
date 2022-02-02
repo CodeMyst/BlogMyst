@@ -30,6 +30,12 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Collection<BlogFollow> follows = new ArrayList<>();
 
+    @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Collection<Comment> comments;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Collection<Report> reports;
+
     @JsonManagedReference
     public Collection<BlogFollow> getFollows() {
         return follows;

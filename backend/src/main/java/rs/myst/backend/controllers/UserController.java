@@ -1,16 +1,19 @@
 package rs.myst.backend.controllers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import rs.myst.backend.constants.AuthConstants;
 import rs.myst.backend.model.*;
+import rs.myst.backend.payload.MessageResponse;
 import rs.myst.backend.repositories.BlogFollowRepository;
 import rs.myst.backend.repositories.BlogRepository;
 import rs.myst.backend.repositories.UserRepository;
 import rs.myst.backend.services.UserDetailsImpl;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -110,6 +113,24 @@ public class UserController {
         user.get().setRole(role);
 
         userRepository.save(user.get());
+
+        return ResponseEntity.ok().build();
+    }
+
+    @Transactional
+    @DeleteMapping("/{username}")
+    @PreAuthorize(AuthConstants.USER_AUTH)
+    public ResponseEntity<?> deleteUser(@PathVariable String username) {
+        UserDetailsImpl currentUserDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userRepository.findByUsername(currentUserDetails.getUsername()).orElseThrow();
+
+        if (currentUser.getRole() != UserRole.ADMIN) {
+            if (!currentUserDetails.getUsername().equals(username)) {
+                return new ResponseEntity<>(new MessageResponse("Can't delete someone else's account."), HttpStatus.UNAUTHORIZED);
+            }
+        }
+
+        userRepository.deleteByUsername(username);
 
         return ResponseEntity.ok().build();
     }

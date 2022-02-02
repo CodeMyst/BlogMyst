@@ -2,7 +2,7 @@
     import { onMount, tick } from "svelte";
     import { getUser as getCurrentUser, isLoggedIn } from "../../api/auth";
     import { Blog, getBlogs } from "../../api/blog";
-    import { getUser, setUserRole, User } from "../../api/user";
+    import { deleteUser, getUser, setUserRole, User } from "../../api/user";
 
     export let params: { user: string; };
 
@@ -36,6 +36,13 @@
 
         location.reload();
     };
+
+    const onDeleteUser = async () => {
+        if (confirm("Are you sure you want to delete this account?")) {
+            await deleteUser(user.username);
+            window.location.href = "/";
+        }
+    };
 </script>
 
 {#if user === null}
@@ -52,13 +59,19 @@
             {/if}
         </div>
 
-        {#if isAdmin}
-            <select name="role" on:change={onRoleChange} bind:value={selectedRole}>
-                <option value="ADMIN">Admin</option>
-                <option value="MOD">Mod</option>
-                <option value="USER">User</option>
-            </select>
-        {/if}
+        <div>
+            {#if isAdmin}
+                <select name="role" on:change={onRoleChange} bind:value={selectedRole}>
+                    <option value="ADMIN">Admin</option>
+                    <option value="MOD">Mod</option>
+                    <option value="USER">User</option>
+                </select>
+            {/if}
+
+            {#if user.username === currentUser?.username || isAdmin}
+                <a class="delete" href="/" on:click|preventDefault={onDeleteUser}>delete user</a>
+            {/if}
+        </div>
     </h2>
 
     {#if blogs.length === 0}
@@ -107,5 +120,11 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+    }
+
+    .delete {
+        font-size: 1rem;
+        color: var(--nc-red);
+        margin-left: 0.5rem;
     }
 </style>

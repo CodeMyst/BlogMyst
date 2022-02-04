@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import rs.myst.backend.constants.AuthConstants;
+import rs.myst.backend.constants.RoleConstants;
 import rs.myst.backend.model.Blog;
 import rs.myst.backend.model.Post;
 import rs.myst.backend.model.User;
@@ -40,7 +40,7 @@ public class BlogController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize(AuthConstants.USER_AUTH)
+    @PreAuthorize(RoleConstants.USER_NOT_BANNED)
     public ResponseEntity<?> createBlog(@Valid @RequestBody BlogCreateInfo createInfo) {
         Slugify slugify = new Slugify();
         String url = slugify.slugify(createInfo.getName());
@@ -74,7 +74,7 @@ public class BlogController {
     }
 
     @PatchMapping("/{author}/{url}")
-    @PreAuthorize(AuthConstants.USER_AUTH)
+    @PreAuthorize(RoleConstants.USER_NOT_BANNED)
     public ResponseEntity<?> editBlog(@PathVariable String author, @PathVariable String url, @Valid @RequestBody BlogCreateInfo createInfo) {
         Optional<User> user = userRepository.findByUsername(author);
 
@@ -104,7 +104,7 @@ public class BlogController {
     }
 
     @DeleteMapping("/{author}/{url}")
-    @PreAuthorize(AuthConstants.USER_AUTH)
+    @PreAuthorize(RoleConstants.USER_NOT_BANNED)
     @Transactional
     public ResponseEntity<?> deleteBlog(@PathVariable String author, @PathVariable String url) {
         if (!userRepository.existsByUsername(author)) {
@@ -130,7 +130,7 @@ public class BlogController {
     }
 
     @PostMapping("/{author}/{url}")
-    @PreAuthorize(AuthConstants.USER_AUTH)
+    @PreAuthorize(RoleConstants.USER_NOT_BANNED)
     public ResponseEntity<?> createPost(@PathVariable String author, @PathVariable String url, @Valid @RequestBody PostCreateInfo createInfo) {
         Slugify slugify = new Slugify();
         String postUrl = slugify.slugify(createInfo.getTitle());
@@ -168,7 +168,7 @@ public class BlogController {
     }
 
     @PatchMapping("/{author}/{blog}/{post}")
-    @PreAuthorize(AuthConstants.USER_AUTH)
+    @PreAuthorize(RoleConstants.USER_NOT_BANNED)
     public ResponseEntity<?> editPost(@PathVariable String author, @PathVariable("blog") String blogUrl, @PathVariable("post") String postUrl, @Valid @RequestBody PostCreateInfo createInfo) {
         var res = verifyPostUpdate(author, blogUrl, postUrl);
         if (res.isPresent()) return res.get();
@@ -187,7 +187,7 @@ public class BlogController {
     }
 
     @DeleteMapping("/{author}/{blog}/{post}")
-    @PreAuthorize(AuthConstants.USER_AUTH)
+    @PreAuthorize(RoleConstants.USER_NOT_BANNED)
     @Transactional
     public ResponseEntity<?> deletePost(@PathVariable String author, @PathVariable("blog") String blogUrl, @PathVariable("post") String postUrl) {
         var res = verifyPostUpdate(author, blogUrl, postUrl);

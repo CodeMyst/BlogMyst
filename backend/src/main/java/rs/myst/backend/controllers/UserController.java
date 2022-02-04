@@ -2,10 +2,11 @@ package rs.myst.backend.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import rs.myst.backend.constants.AuthConstants;
+import rs.myst.backend.constants.RoleConstants;
 import rs.myst.backend.model.*;
 import rs.myst.backend.payload.MessageResponse;
 import rs.myst.backend.repositories.BlogFollowRepository;
@@ -14,6 +15,9 @@ import rs.myst.backend.repositories.UserRepository;
 import rs.myst.backend.services.UserDetailsImpl;
 
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,7 +45,7 @@ public class UserController {
     }
 
     @GetMapping("/following")
-    @PreAuthorize(AuthConstants.USER_AUTH)
+    @PreAuthorize(RoleConstants.USER_MIGHT_BANNED)
     public ResponseEntity<?> getFollowedBlogs() {
         UserDetailsImpl currentUserDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -55,7 +59,7 @@ public class UserController {
     }
 
     @GetMapping("/follow/{username}/{blog}")
-    @PreAuthorize(AuthConstants.USER_AUTH)
+    @PreAuthorize(RoleConstants.USER_MIGHT_BANNED)
     public ResponseEntity<?> isFollowingBlog(@PathVariable String username, @PathVariable String blog) {
         UserDetailsImpl currentUserDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -75,7 +79,7 @@ public class UserController {
     }
 
     @PostMapping("/follow/{username}/{blog}")
-    @PreAuthorize(AuthConstants.USER_AUTH)
+    @PreAuthorize(RoleConstants.USER_MIGHT_BANNED)
     public ResponseEntity<?> toggleFollowBlog(@PathVariable String username, @PathVariable String blog) {
         if (!userRepository.existsByUsername(username)) return ResponseEntity.notFound().build();
 
@@ -104,7 +108,7 @@ public class UserController {
     }
 
     @PatchMapping("/{username}")
-    @PreAuthorize(AuthConstants.ADMIN_AUTH)
+    @PreAuthorize(RoleConstants.ADMIN)
     public ResponseEntity<?> patchUserRole(@PathVariable String username, @RequestBody UserRole role) {
         Optional<User> user = userRepository.findByUsername(username);
 
@@ -119,7 +123,7 @@ public class UserController {
 
     @Transactional
     @DeleteMapping("/{username}")
-    @PreAuthorize(AuthConstants.USER_AUTH)
+    @PreAuthorize(RoleConstants.USER_MIGHT_BANNED)
     public ResponseEntity<?> deleteUser(@PathVariable String username) {
         UserDetailsImpl currentUserDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userRepository.findByUsername(currentUserDetails.getUsername()).orElseThrow();
@@ -133,5 +137,46 @@ public class UserController {
         userRepository.deleteByUsername(username);
 
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{username}/ban")
+    @PreAuthorize(RoleConstants.MOD)
+    public ResponseEntity<?> banUser(@PathVariable String username) {
+        User user = userRepository.findByUsername(username).orElseThrow();
+
+        user.setRole(UserRole.BANNED);
+        user.setBannedAt(new Timestamp(new Date().getTime()));
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{username}/unban")
+    @PreAuthorize(RoleConstants.MOD)
+    public ResponseEntity<?> unbanUser(@PathVariable String username) {
+        User user = userRepository.findByUsername(username).orElseThrow();
+
+        user.setRole(UserRole.USER);
+        user.setBannedAt(null);
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @Scheduled(fixedDelay = 60 * 60 * 1000)
+    public void scheduledUnban() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, -7);
+        Date weekAgo = cal.getTime();
+
+        List<User> usersToUban = userRepository.findAllByBannedAtBefore(weekAgo);
+
+        for (User user : usersToUban) {
+            user.setRole(UserRole.USER);
+            user.setBannedAt(null);
+            userRepository.save(user);
+        }
     }
 }

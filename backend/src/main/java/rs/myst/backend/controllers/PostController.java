@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import rs.myst.backend.constants.AuthConstants;
+import rs.myst.backend.constants.RoleConstants;
 import rs.myst.backend.model.*;
 import rs.myst.backend.payload.MessageResponse;
 import rs.myst.backend.repositories.BlogRepository;
@@ -45,7 +45,7 @@ public class PostController {
     }
 
     @GetMapping("/followed/{page}")
-    @PreAuthorize(AuthConstants.USER_AUTH)
+    @PreAuthorize(RoleConstants.USER_MIGHT_BANNED)
     public ResponseEntity<?> getFollowed(@PathVariable int page) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userRepository.findByUsername(userDetails.username()).orElseThrow();
@@ -58,19 +58,19 @@ public class PostController {
     }
 
     @PostMapping("/{author}/{blog}/{post}/upvote")
-    @PreAuthorize(AuthConstants.USER_AUTH)
+    @PreAuthorize(RoleConstants.USER_MIGHT_BANNED)
     public ResponseEntity<?> postUpvote(@PathVariable String author, @PathVariable String blog, @PathVariable String post) {
         return upvote(author, blog, post, true);
     }
 
     @PostMapping("/{author}/{blog}/{post}/downvote")
-    @PreAuthorize(AuthConstants.USER_AUTH)
+    @PreAuthorize(RoleConstants.USER_MIGHT_BANNED)
     public ResponseEntity<?> postDownvote(@PathVariable String author, @PathVariable String blog, @PathVariable String post) {
         return upvote(author, blog, post, false);
     }
 
     @PostMapping("/{author}/{blog}/{post}/comment")
-    @PreAuthorize(AuthConstants.USER_AUTH)
+    @PreAuthorize(RoleConstants.USER_NOT_BANNED)
     public ResponseEntity<?> postComment(@PathVariable String author, @PathVariable String blog, @PathVariable String post, @RequestBody String comment) {
         Optional<Blog> blogRes = blogRepository.findByUrlAndAuthorUsername(blog, author);
 
@@ -110,7 +110,7 @@ public class PostController {
     }
 
     @DeleteMapping("/comment/{id}")
-    @PreAuthorize(AuthConstants.USER_AUTH)
+    @PreAuthorize(RoleConstants.USER_NOT_BANNED)
     public ResponseEntity<?> deleteComment(@PathVariable int id) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -132,7 +132,7 @@ public class PostController {
     }
 
     @PatchMapping("/comment/{id}")
-    @PreAuthorize(AuthConstants.USER_AUTH)
+    @PreAuthorize(RoleConstants.USER_NOT_BANNED)
     public ResponseEntity<?> editComment(@PathVariable int id, @RequestBody String content) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 

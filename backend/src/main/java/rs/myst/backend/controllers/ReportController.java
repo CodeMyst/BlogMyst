@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import rs.myst.backend.constants.AuthConstants;
+import rs.myst.backend.constants.RoleConstants;
 import rs.myst.backend.model.*;
 import rs.myst.backend.repositories.CommentRepository;
 import rs.myst.backend.repositories.ReportRepository;
@@ -29,7 +29,7 @@ public class ReportController {
     }
 
     @PostMapping("/{author}/{blogUrl}")
-    @PreAuthorize(AuthConstants.USER_AUTH)
+    @PreAuthorize(RoleConstants.USER_NOT_BANNED)
     public ResponseEntity<?> postReportBlog(@PathVariable String author, @PathVariable String blogUrl, @RequestBody String reason) {
         UserDetailsImpl currentUser = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByUsername(currentUser.getUsername()).orElseThrow();
@@ -40,7 +40,7 @@ public class ReportController {
     }
 
     @PostMapping("/{author}/{blogUrl}/{postUrl}")
-    @PreAuthorize(AuthConstants.USER_AUTH)
+    @PreAuthorize(RoleConstants.USER_NOT_BANNED)
     public ResponseEntity<?> postReportPost(@PathVariable String author, @PathVariable String blogUrl, @PathVariable String postUrl, @RequestBody String reason) {
         UserDetailsImpl currentUser = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByUsername(currentUser.getUsername()).orElseThrow();
@@ -51,7 +51,7 @@ public class ReportController {
     }
 
     @PostMapping("/{commentId}")
-    @PreAuthorize(AuthConstants.USER_AUTH)
+    @PreAuthorize(RoleConstants.USER_NOT_BANNED)
     public ResponseEntity<?> postReportComment(@PathVariable Integer commentId, @RequestBody String reason) {
         UserDetailsImpl currentUser = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByUsername(currentUser.getUsername()).orElseThrow();
@@ -67,13 +67,13 @@ public class ReportController {
     }
 
     @GetMapping
-    @PreAuthorize(AuthConstants.MOD_AUTH)
+    @PreAuthorize(RoleConstants.MOD)
     public ResponseEntity<?> getReports() {
         return ResponseEntity.ok(reportRepository.findAll(Sort.by(Sort.Direction.DESC, "date")));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize(AuthConstants.MOD_AUTH)
+    @PreAuthorize(RoleConstants.MOD)
     public ResponseEntity<?> deleteReport(@PathVariable Integer id) {
         reportRepository.deleteById(id);
         return ResponseEntity.ok().build();

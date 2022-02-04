@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -23,6 +24,10 @@ public class User {
     @Basic
     @Column(name = "password_hash")
     private String passwordHash;
+
+    @Basic
+    @Column(name = "bannedAt")
+    private Timestamp bannedAt;
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Collection<Blog> blogs;
@@ -90,5 +95,13 @@ public class User {
 
     public void setBlogs(Collection<Blog> blogs) {
         this.blogs = blogs;
+    }
+
+    public Timestamp getBannedAt() {
+        return bannedAt;
+    }
+
+    public void setBannedAt(Timestamp bannedAt) {
+        this.bannedAt = bannedAt;
     }
 }

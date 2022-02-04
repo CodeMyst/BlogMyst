@@ -85,8 +85,10 @@
                     {:else}
                         <a href="/" on:click|preventDefault={onFollow}>+ follow</a>
                     {/if}
-                    <span class="separator">|</span>
-                    <a href="/" on:click|preventDefault={onReportClick}>report</a>
+                    {#if currentUser?.role !== "BANNED"}
+                        <span class="separator">|</span>
+                        <a href="/" on:click|preventDefault={onReportClick}>report</a>
+                    {/if}
                 {/if}
             </div>
         {/if}
@@ -100,7 +102,7 @@
             {/if}
 
             <div>
-                {#if isAuthor}
+                {#if isAuthor && currentUser?.role !== "BANNED"}
                     {#if !editing}
                         <a href="/" class="edit" on:click|preventDefault={() => editing = true}>edit</a>
                     {:else}
@@ -108,7 +110,7 @@
                     {/if}
                 {/if}
 
-                {#if isAuthor || isAdmin}
+                {#if (isAuthor && currentUser?.role !== "BANNED") || isAdmin}
                     <a href="/" class="delete" on:click={onDeleteBlog}>delete</a>
                 {/if}
             </div>
@@ -116,8 +118,10 @@
     </div>
 
     {#if posts.length === 0}
-        {#if isAuthor}
+        {#if isAuthor && currentUser?.role !== "BANNED"}
             <p class="empty">There's no posts here. You can create a new post <a href="/new/post">here</a>.</p>
+        {:else if isAuthor && currentUser?.role === "BANNED"}
+            <p class="empty">There's no posts here. And you can't create one since you are banned.</p>
         {:else}
             <p class="empty">There's no posts here.</p>
         {/if}

@@ -80,3 +80,25 @@ export const deleteUser = async (user: string) => {
         }
     });
 };
+
+export const banUser = async (user: string) => {
+    await fetch(`${API_BASE}/user/${user}/ban`, {
+        method: "POST",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+};
+
+export const unbanUser = async (user: string) => {
+    await fetch(`${API_BASE}/user/${user}/unban`, {
+        method: "POST",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+};

@@ -23,8 +23,6 @@ import rs.myst.backend.services.UserDetailsImpl;
 import rs.myst.backend.utils.JwtUtils;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")

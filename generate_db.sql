@@ -2,15 +2,16 @@ create database if not exists blogmyst;
 
 create table user
 (
-    username      varchar(20)                   not null primary key,
-    role          enum ('ADMIN', 'MOD', 'USER') not null,
-    password_hash tinytext                      not null
+    username      varchar(50)                             not null primary key,
+    role          enum ('ADMIN', 'MOD', 'USER', 'BANNED') not null,
+    password_hash tinytext                                not null,
+    banned_at      datetime
 );
 
 create table blog
 (
-    url             varchar(20) not null primary key,
-    author_username varchar(20) not null,
+    url             varchar(50) not null primary key,
+    author_username varchar(50) not null,
     name            tinytext    not null,
     description     text        not null,
 
@@ -21,8 +22,8 @@ create table blog
 
 create table post
 (
-    url        varchar(20) not null primary key,
-    blog_url   varchar(20) not null,
+    url        varchar(50) not null primary key,
+    blog_url   varchar(50) not null,
     created_at datetime    not null,
     last_edit  datetime,
     title      tinytext    not null,
@@ -37,8 +38,8 @@ create table post
 create table comment
 (
     id               int         not null auto_increment primary key,
-    author_username  varchar(20) not null,
-    post_url         varchar(20) not null,
+    author_username  varchar(50) not null,
+    post_url         varchar(50) not null,
     created_at       datetime    not null,
     last_edit        datetime,
     content          text,
@@ -55,7 +56,7 @@ create table comment
 create table report
 (
     id            int         not null auto_increment primary key,
-    user_username varchar(20) not null,
+    user_username varchar(50) not null,
     type          enum ('BLOG', 'POST', 'COMMENT'),
     date          datetime    not null,
     reason        text,
@@ -69,8 +70,8 @@ create table report
 
 create table blog_follow
 (
-    user_username varchar(20) not null,
-    blog_url      varchar(20) not null,
+    user_username varchar(50) not null,
+    blog_url      varchar(50) not null,
 
     primary key (user_username, blog_url),
 

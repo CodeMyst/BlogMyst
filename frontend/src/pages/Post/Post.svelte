@@ -30,6 +30,7 @@
     let commentsPromise: Promise<Page<Comment>>;
 
     let currentUser: UserObj;
+    let isBanned = false;
 
     let editingComment: number;
     let editingCommentContent: string;
@@ -63,6 +64,7 @@
             isAuthor = currentUser.username === author.username;
             isMod = currentUser.role === "ADMIN" || currentUser.role === "MOD";
             loggedIn = true;
+            isBanned = currentUser.role === "BANNED";
         }
 
         commentsPromise = getComments(author.username, post.blog.url, post.url, commentsPage);
@@ -173,13 +175,16 @@
 
             {#if loggedIn}
                 <div class="edit-links">
-                    {#if isAuthor}
+                    {#if isAuthor && !isBanned}
                         <a href="/~{author.username}/{post.blog.url}/{post.url}/edit" class="edit">edit</a>
                     {/if}
-                    {#if isAuthor || isMod}
+                    {#if (isAuthor && !isBanned) || isMod}
                         <a href="/" on:click={onDelete} class="delete">delete</a>
                     {/if}
-                    <a href="/" on:click|preventDefault={onReportPostClick}>report</a>
+
+                    {#if !isBanned}
+                        <a href="/" on:click|preventDefault={onReportPostClick}>report</a>
+                    {/if}
                 </div>
             {/if}
         </div>
@@ -199,12 +204,16 @@
     <div class="comments">
         <h4>Comments</h4>
 
-        {#if loggedIn}
+        {#if loggedIn && !isBanned}
             <div class="post-comment-top">
                 <p>Post a comment</p>
                 <button on:click={() => onPostComment()}>Submit</button>
             </div>
             <textarea bind:value={commentContent} placeholder="Comment..." rows="4"></textarea>
+        {:else if loggedIn && isBanned}
+            <div class="post-comment-top">
+                <p>Banned users can't post comments.</p>
+            </div>
         {/if}
 
         {#if commentsPromise !== undefined}
@@ -225,19 +234,21 @@
                             </div>
                             <p class="comment-content">{comment.content}</p>
 
-                            <div class="comment-edit">
-                                {#if currentUser.username === comment.author.username}
-                                    <a href="/" on:click|preventDefault={() => onCommentEdit(comment.id, comment.content)}>edit</a>
-                                {/if}
+                            {#if !isBanned}
+                                <div class="comment-edit">
+                                    {#if currentUser.username === comment.author.username}
+                                        <a href="/" on:click|preventDefault={() => onCommentEdit(comment.id, comment.content)}>edit</a>
+                                    {/if}
 
-                                {#if currentUser.username === comment.author.username || isMod}
-                                    <a href="/" on:click|preventDefault={() => onCommentDelete(comment.id)}>delete</a>
-                                {/if}
+                                    {#if currentUser.username === comment.author.username || isMod}
+                                        <a href="/" on:click|preventDefault={() => onCommentDelete(comment.id)}>delete</a>
+                                    {/if}
 
-                                {#if loggedIn}
-                                    <a href="/" on:click|preventDefault={() => onReportCommentClick(comment.id)}>report</a>
-                                {/if}
-                            </div>
+                                    {#if loggedIn}
+                                        <a href="/" on:click|preventDefault={() => onReportCommentClick(comment.id)}>report</a>
+                                    {/if}
+                                </div>
+                            {/if}
                         {/if}
                     </div>
                 {/each}
@@ -266,7 +277,7 @@
     <h2>Post not found</h2>
 {/if}
 
-{#if loggedIn}
+{#if loggedIn && !isBanned}
     <Report bind:visible={reportPostVisible} on:report={onReportPostSubmit} />
     <Report bind:visible={reportCommentVisible} on:report={onReportCommentSubmit} />
 {/if}

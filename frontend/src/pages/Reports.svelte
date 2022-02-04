@@ -25,6 +25,9 @@
     <h2>Reports</h2>
 
     {#await reportsPromise then reports}
+        {#if reports.length === 0}
+            <p>There's no reports.</p>
+        {/if}
         {#each reports as report}
             <div class="report">
                 <div class="title">

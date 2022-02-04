@@ -2,7 +2,7 @@
     import { onMount, tick } from "svelte";
     import { getUser as getCurrentUser, isLoggedIn } from "../../api/auth";
     import { Blog, getBlogs } from "../../api/blog";
-    import { deleteUser, getUser, setUserRole, User } from "../../api/user";
+    import { banUser, deleteUser, getUser, setUserRole, unbanUser, User } from "../../api/user";
 
     export let params: { user: string; };
 
@@ -11,6 +11,7 @@
 
     let currentUser: User;
     let isAdmin = false;
+    let isMod = false;
 
     let selectedRole: string;
 
@@ -20,6 +21,7 @@
         if (await isLoggedIn()) {
             currentUser = await getCurrentUser();
             isAdmin = currentUser.role === "ADMIN";
+            isMod = isAdmin || currentUser.role === "MOD";
         }
 
         if (user === null) return;
@@ -43,6 +45,22 @@
             window.location.href = "/";
         }
     };
+
+    const onBanUser = async () => {
+        if (confirm("Are you sure you want to ban this user?")) {
+            await banUser(user.username);
+            user.role = "BANNED";
+            selectedRole = user.role;
+        }
+    };
+
+    const onUnbanUser = async () => {
+        if (confirm("Are you sure you want to unban this user?")) {
+            await unbanUser(user.username);
+            user.role = "USER";
+            selectedRole = user.role;
+        }
+    };
 </script>
 
 {#if user === null}
@@ -57,15 +75,27 @@
             {#if user.role === "MOD"}
                 <span class="mod">[M]</span>
             {/if}
+            {#if user.role === "BANNED"}
+                <span class="mod">[BANNED]</span>
+            {/if}
         </div>
 
-        <div>
-            {#if isAdmin}
+        <div class="links">
+            {#if isAdmin && user.role !== "BANNED"}
                 <select name="role" on:change={onRoleChange} bind:value={selectedRole}>
                     <option value="ADMIN">Admin</option>
                     <option value="MOD">Mod</option>
                     <option value="USER">User</option>
                 </select>
+            {/if}
+
+            {#if isMod}
+                {#if user.role === "BANNED"}
+                    <a class="delete" href="/" on:click|preventDefault={onUnbanUser}>unban</a>
+                {/if}
+                {#if user.role === "USER"}
+                    <a class="delete" href="/" on:click|preventDefault={onBanUser}>ban</a>
+                {/if}
             {/if}
 
             {#if user.username === currentUser?.username || isAdmin}
@@ -75,8 +105,10 @@
     </h2>
 
     {#if blogs.length === 0}
-        {#if currentUser?.username === user.username}
+        {#if currentUser?.username === user.username && currentUser?.role !== "BANNED"}
             <p>You don't have any blogs. Create one <a href="/new/blog">here</a>.</p>
+        {:else if currentUser?.username === user.username && currentUser?.role === "BANNED"}
+            <p>You don't have any blogs. And you can't create one since you're banned.</p>
         {:else}
             <p>This user has no blogs.</p>
         {/if}
@@ -126,5 +158,15 @@
         font-size: 1rem;
         color: var(--nc-red);
         margin-left: 0.5rem;
+    }
+
+    h2 .links {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    h2 select {
+        margin: 0;
     }
 </style>

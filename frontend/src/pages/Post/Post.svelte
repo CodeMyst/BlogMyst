@@ -223,7 +223,7 @@
                                     <br />Edited on {new Date(comment.lastEdit).toLocaleString()}
                                 {/if}
                             </div>
-                            <p>{comment.content}</p>
+                            <p class="comment-content">{comment.content}</p>
 
                             <div class="comment-edit">
                                 {#if currentUser.username === comment.author.username}
@@ -369,5 +369,9 @@
 
     .comment-edit a {
         margin-right: 0.5rem;
+    }
+
+    .comment-content {
+        white-space: pre-line;
     }
 </style>

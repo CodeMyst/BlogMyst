@@ -1,5 +1,6 @@
 package rs.myst.backend.repositories;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import rs.myst.backend.model.User;
@@ -15,5 +16,5 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     boolean existsByUsername(String username);
     void deleteByUsername(String username);
     List<User> findAllByBannedAtBefore(Date before);
-    List<User> findAllByCreatedAtBetween(Timestamp from, Timestamp to);
+    List<User> findAllByCreatedAtBetween(Timestamp from, Timestamp to, Sort sort);
 }

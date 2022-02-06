@@ -85,4 +85,12 @@ public class Blog {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    public Collection<BlogFollow> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(Collection<BlogFollow> followers) {
+        this.followers = followers;
+    }
 }

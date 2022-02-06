@@ -2,6 +2,7 @@ package rs.myst.backend.repositories;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import rs.myst.backend.model.Blog;
 import rs.myst.backend.model.Post;
@@ -21,5 +22,5 @@ public interface PostRepository extends JpaRepository<Post, String> {
 
     List<Post> findByTitleContainingIgnoreCase(String title);
 
-    List<Post> findAllByCreatedAtBetween(Timestamp createdAt, Timestamp createdAt2);
+    List<Post> findAllByCreatedAtBetween(Timestamp from, Timestamp to, Sort sort);
 }

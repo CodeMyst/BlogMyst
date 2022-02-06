@@ -2,6 +2,7 @@ package rs.myst.backend.controllers;
 
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,9 +38,9 @@ public class JasperReportsController {
         Timestamp tsFrom = Timestamp.valueOf(dateFrom.atStartOfDay());
         Timestamp tsTo = Timestamp.valueOf(dateTo.atTime(23, 59));
 
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(postRepository.findAllByCreatedAtBetween(tsFrom, tsTo), false);
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(postRepository.findAllByCreatedAtBetween(tsFrom, tsTo, Sort.by(Sort.Direction.DESC, "createdAt")), false);
 
-        try (InputStream is = this.getClass().getResourceAsStream("/jasper-reports/Users.jrxml")) {
+        try (InputStream is = this.getClass().getResourceAsStream("/jasper-reports/BlogPosts.jrxml")) {
             JasperReport report = JasperCompileManager.compileReport(is);
 
             Map<String, Object> params = new HashMap<>();
@@ -63,7 +64,7 @@ public class JasperReportsController {
         Timestamp tsFrom = Timestamp.valueOf(dateFrom.atStartOfDay());
         Timestamp tsTo = Timestamp.valueOf(dateTo.atTime(23, 59));
 
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(userRepository.findAllByCreatedAtBetween(tsFrom, tsTo), false);
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(userRepository.findAllByCreatedAtBetween(tsFrom, tsTo, Sort.by(Sort.Direction.DESC, "createdAt")), false);
 
         try (InputStream is = this.getClass().getResourceAsStream("/jasper-reports/Users.jrxml")) {
             JasperReport report = JasperCompileManager.compileReport(is);

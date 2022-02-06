@@ -59,21 +59,21 @@
 				<reportElement x="-20" y="20" width="595" height="1" forecolor="#666666" uuid="9407e474-dfee-4d23-ac6e-1a2b912b3fd3"/>
 			</line>
 			<staticText>
-				<reportElement x="0" y="0" width="100" height="21" uuid="f7ad079a-4f88-439d-a589-0262c2fb800a">
+				<reportElement x="0" y="0" width="154" height="21" uuid="f7ad079a-4f88-439d-a589-0262c2fb800a">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="96faf9c6-71a5-4c87-b153-bdd3731d248f"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<text><![CDATA[Post Title]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="100" y="0" width="100" height="21" uuid="aa1ee99e-4d33-4626-ba89-7bc19b74e4e9">
+				<reportElement x="155" y="0" width="100" height="21" uuid="aa1ee99e-4d33-4626-ba89-7bc19b74e4e9">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="012798e8-157d-43a0-929d-fa5500a791e2"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<text><![CDATA[Created At]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="200" y="-1" width="80" height="21" uuid="481433b3-ea87-405a-8f0f-e87639ad66f2">
+				<reportElement x="255" y="0" width="44" height="21" uuid="481433b3-ea87-405a-8f0f-e87639ad66f2">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1ec0a67f-30ad-40b9-a476-f2840e075e1e"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
@@ -94,7 +94,7 @@
 				<text><![CDATA[Post Author]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="280" y="0" width="74" height="21" uuid="d1fffb2a-5ee2-470d-8cda-8838234f4a8b">
+				<reportElement x="299" y="0" width="56" height="21" uuid="d1fffb2a-5ee2-470d-8cda-8838234f4a8b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3e385c83-3343-44aa-af28-5536fff5fda1"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle"/>
@@ -108,19 +108,19 @@
 				<reportElement positionType="FixRelativeToBottom" x="0" y="29" width="555" height="1" uuid="6b85b3f2-a06a-491c-b73f-9bd000e42b9c"/>
 			</line>
 			<textField>
-				<reportElement x="0" y="14" width="100" height="16" uuid="206b3163-c9cb-4dfa-a184-289d10daa80a">
+				<reportElement x="0" y="14" width="154" height="16" uuid="206b3163-c9cb-4dfa-a184-289d10daa80a">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="96faf9c6-71a5-4c87-b153-bdd3731d248f"/>
 				</reportElement>
 				<textFieldExpression><![CDATA[$F{title}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="100" y="14" width="100" height="14" uuid="3b07c4e5-275a-4fdd-b3df-11b5aae8d1ea">
+				<reportElement x="155" y="15" width="100" height="14" uuid="3b07c4e5-275a-4fdd-b3df-11b5aae8d1ea">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="012798e8-157d-43a0-929d-fa5500a791e2"/>
 				</reportElement>
 				<textFieldExpression><![CDATA[$F{createdAt}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="200" y="14" width="80" height="16" uuid="1893ada3-61c7-47f7-b82b-dd54cd117541">
+				<reportElement x="255" y="13" width="44" height="16" uuid="1893ada3-61c7-47f7-b82b-dd54cd117541">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1ec0a67f-30ad-40b9-a476-f2840e075e1e"/>
 				</reportElement>
 				<textFieldExpression><![CDATA[$F{upvotes}]]></textFieldExpression>
@@ -138,7 +138,7 @@
 				<textFieldExpression><![CDATA[$F{blog.author.username}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="280" y="14" width="74" height="14" uuid="3dc24714-580d-47ec-b855-ccff50335734">
+				<reportElement x="299" y="14" width="56" height="14" uuid="3dc24714-580d-47ec-b855-ccff50335734">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3e385c83-3343-44aa-af28-5536fff5fda1"/>
 				</reportElement>
 				<textFieldExpression><![CDATA[$F{comments}.size()]]></textFieldExpression>

@@ -26,7 +26,11 @@ public class User {
     private String passwordHash;
 
     @Basic
-    @Column(name = "bannedAt")
+    @Column(name = "created_at")
+    private Timestamp createdAt;
+
+    @Basic
+    @Column(name = "banned_at")
     private Timestamp bannedAt;
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE, orphanRemoval = true)
@@ -103,5 +107,23 @@ public class User {
 
     public void setBannedAt(Timestamp bannedAt) {
         this.bannedAt = bannedAt;
+    }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @JsonBackReference
+    public Collection<Comment> getComments() {
+        return comments;
+    }
+
+    @JsonBackReference
+    public Collection<Report> getReports() {
+        return reports;
     }
 }

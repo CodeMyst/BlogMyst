@@ -4,6 +4,7 @@ import type { Blog } from "./blog";
 export interface User {
     username: string;
     role: string;
+    createdAt: Date;
 }
 
 export const getUser = async (username: string): Promise<User | null> => {

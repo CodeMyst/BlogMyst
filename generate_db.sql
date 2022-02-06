@@ -5,7 +5,8 @@ create table user
     username      varchar(50)                             not null primary key,
     role          enum ('ADMIN', 'MOD', 'USER', 'BANNED') not null,
     password_hash tinytext                                not null,
-    banned_at      datetime
+    created_at    datetime                                not null,
+    banned_at     datetime
 );
 
 create table blog

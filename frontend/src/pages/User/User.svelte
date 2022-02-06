@@ -104,6 +104,8 @@
         </div>
     </h2>
 
+    <p>Registered on {new Date(user?.createdAt).toLocaleString()}</p>
+
     {#if blogs.length === 0}
         {#if currentUser?.username === user.username && currentUser?.role !== "BANNED"}
             <p>You don't have any blogs. Create one <a href="/new/blog">here</a>.</p>

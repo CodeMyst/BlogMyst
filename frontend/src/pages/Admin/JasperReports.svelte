@@ -8,6 +8,9 @@ import { API_BASE } from "../../api/api";
     let postsReportFrom: Date;
     let postsReportTo: Date;
 
+    let usersReportFrom: Date;
+    let usersReportTo: Date;
+
     onMount(async () => {
         if (await isLoggedIn()) {
             const user = await getUser();
@@ -30,6 +33,19 @@ import { API_BASE } from "../../api/api";
         <input type="date" bind:value={postsReportTo} />
 
         <a target="_blank" href="{API_BASE}/jasper/posts?from={postsReportFrom}&to={postsReportTo}">Generate Report</a>
+    </div>
+
+    <h3>Users Report</h3>
+    <span class="description">Generates a report on all users that registered in the specified time frame.</span>
+
+    <div class="fields">
+        <span>From</span>
+        <input type="date" bind:value={usersReportFrom} />
+
+        <span>To</span>
+        <input type="date" bind:value={usersReportTo} />
+
+        <a target="_blank" href="{API_BASE}/jasper/users?from={usersReportFrom}&to={usersReportTo}">Generate Report</a>
     </div>
 {:else}
     <h2>Forbidden</h2>

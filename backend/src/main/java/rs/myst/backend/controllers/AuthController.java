@@ -23,6 +23,7 @@ import rs.myst.backend.services.UserDetailsImpl;
 import rs.myst.backend.utils.JwtUtils;
 
 import javax.validation.Valid;
+import java.sql.Timestamp;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -69,6 +70,7 @@ public class AuthController {
         User user = new User();
         user.setUsername(registerRequest.getUsername());
         user.setPasswordHash(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
         user.setRole(userRepository.count() == 0 ? UserRole.ADMIN : UserRole.USER);
 

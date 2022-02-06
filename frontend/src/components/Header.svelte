@@ -32,7 +32,7 @@
                 </li>
 
                 {#if user.role === "ADMIN" || user.role === "MOD"}
-                    <li><a href="/mod/reports">View Reports</a></li>
+                    <li><a href="/admin/dashboard">Dashboard</a></li>
                 {/if}
 
                 {#if user.role !== "BANNED"}

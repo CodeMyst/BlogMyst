@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { getUser } from "../api/auth";
-    import { getReports, Report, resolveReport } from "../api/report";
+    import { getUser } from "../../api/auth";
+    import { getReports, resolveReport } from "../../api/report";
 
     let isMod = false;
     let reportsPromise = getReports();

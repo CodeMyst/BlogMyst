@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.18.1.final using JasperReports Library version 6.18.1-9d75d1969e774d4f179fb3be8401e98a0e6d1611  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BlogPosts" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="94276248-a455-414e-bac0-b6a4c1aa5b63">
+	<parameter name="from" class="java.time.LocalDate"/>
+	<parameter name="to" class="java.time.LocalDate"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="title" class="java.lang.String"/>
+	<field name="createdAt" class="java.sql.Timestamp"/>
+	<field name="upvotes" class="java.lang.Integer"/>
+	<field name="blog.name" class="java.lang.String"/>
+	<field name="blog.author.username" class="java.lang.String"/>
+	<field name="comments" class="java.util.Collection"/>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="72">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="92" backcolor="#006699" uuid="b12a12e4-b79c-4ba1-9686-d13f9bb75116"/>
+				<staticText>
+					<reportElement x="20" y="20" width="160" height="43" forecolor="#FFFFFF" uuid="cb8c0e80-8e83-459d-80a0-8a4e4e10f2f8"/>
+					<textElement>
+						<font fontName="Ubuntu" size="34" isBold="true"/>
+					</textElement>
+					<text><![CDATA[BlogMyst]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="420" y="20" width="160" height="30" forecolor="#FFFFFF" uuid="e7287f7f-664d-4614-aae8-cfdd37d2b0dd"/>
+					<textElement>
+						<font fontName="Ubuntu" size="20"/>
+					</textElement>
+					<text><![CDATA[Post reports]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="420" y="50" width="160" height="12" forecolor="#FFFFFF" uuid="b8891aa6-05b3-4d78-ac8e-b55a7102c26a"/>
+					<textElement>
+						<font fontName="Ubuntu"/>
+					</textElement>
+					<textFieldExpression><![CDATA["From: " + $P{from}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="420" y="62" width="160" height="18" forecolor="#FFFFFF" uuid="fa431ef0-095c-4a97-a797-daaf7f8c56aa"/>
+					<textElement>
+						<font fontName="Ubuntu"/>
+					</textElement>
+					<textFieldExpression><![CDATA["To:     " + $P{to}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="13"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21">
+			<line>
+				<reportElement x="-20" y="20" width="595" height="1" forecolor="#666666" uuid="9407e474-dfee-4d23-ac6e-1a2b912b3fd3"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="21" uuid="f7ad079a-4f88-439d-a589-0262c2fb800a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="96faf9c6-71a5-4c87-b153-bdd3731d248f"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Post Title]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="0" width="100" height="21" uuid="aa1ee99e-4d33-4626-ba89-7bc19b74e4e9">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="012798e8-157d-43a0-929d-fa5500a791e2"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Created At]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="200" y="-1" width="80" height="21" uuid="481433b3-ea87-405a-8f0f-e87639ad66f2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1ec0a67f-30ad-40b9-a476-f2840e075e1e"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Upvotes]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="0" width="100" height="21" uuid="c2de6d20-6c67-4613-b6d1-163da6d2c378">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2a8e7037-618a-48e2-bae7-c657bd861177"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Blog Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="0" width="100" height="21" uuid="535f89ee-b844-424d-aa67-caca31000889">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="87a018f5-9593-4f7e-a56a-eb6d8294a9b6"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Post Author]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="0" width="74" height="21" uuid="d1fffb2a-5ee2-470d-8cda-8838234f4a8b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3e385c83-3343-44aa-af28-5536fff5fda1"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Comments]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="34">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="29" width="555" height="1" uuid="6b85b3f2-a06a-491c-b73f-9bd000e42b9c"/>
+			</line>
+			<textField>
+				<reportElement x="0" y="14" width="100" height="16" uuid="206b3163-c9cb-4dfa-a184-289d10daa80a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="96faf9c6-71a5-4c87-b153-bdd3731d248f"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{title}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="14" width="100" height="14" uuid="3b07c4e5-275a-4fdd-b3df-11b5aae8d1ea">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="012798e8-157d-43a0-929d-fa5500a791e2"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{createdAt}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="14" width="80" height="16" uuid="1893ada3-61c7-47f7-b82b-dd54cd117541">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1ec0a67f-30ad-40b9-a476-f2840e075e1e"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{upvotes}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="355" y="14" width="100" height="16" uuid="af8c468d-441a-491e-a34c-c6e8d2e07d68">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2a8e7037-618a-48e2-bae7-c657bd861177"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{blog.name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="455" y="14" width="100" height="16" uuid="aefb3574-e41b-40cd-8ffa-6475770818e2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="87a018f5-9593-4f7e-a56a-eb6d8294a9b6"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{blog.author.username}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="14" width="74" height="14" uuid="3dc24714-580d-47ec-b855-ccff50335734">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3e385c83-3343-44aa-af28-5536fff5fda1"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{comments}.size()]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="17">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="4" width="515" height="13" backcolor="#E6E6E6" uuid="9811898b-6bb3-45dd-872d-45b20fbed2cf"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement mode="Opaque" x="515" y="4" width="40" height="13" backcolor="#E6E6E6" uuid="ac215724-4876-4357-b4ad-59eb16b4fc04"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="0" y="4" width="280" height="13" uuid="c5feaa27-9b6d-4f3b-a6cb-d05896d99d0e"/>
+				<textFieldExpression><![CDATA["Generated on: " + new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

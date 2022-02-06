@@ -15,7 +15,9 @@
     import EditPost from "./pages/Post/EditPost.svelte";
     import User from "./pages/User/User.svelte";
     import type { User as UserObj } from "./api/user";
-    import Reports from "./pages/Reports.svelte";
+    import Reports from "./pages/Admin/Reports.svelte";
+    import JasperReports from "./pages/Admin/JasperReports.svelte";
+    import Dashboard from "./pages/Admin/Dashboard.svelte";
 
     let page: any;
     let params: any;
@@ -23,7 +25,9 @@
     router("/", () => (page = Home));
     router("/login", () => (page = Login));
     router("/register", () => (page = Register));
-    router("/mod/reports", () => (page = Reports));
+    router("/admin/dashboard", () => (page = Dashboard));
+    router("/admin/reports", () => (page = Reports));
+    router("/admin/jasper", () => (page = JasperReports));
 
     router(
         "/~:user",

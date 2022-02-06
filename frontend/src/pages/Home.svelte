@@ -212,4 +212,24 @@
     .top input[type=submit] {
         margin: 0;
     }
+
+    @media screen and (max-width: 660px) {
+        .top {
+            flex-direction: column-reverse;
+        }
+
+        .top .search {
+            margin-bottom: 1rem;
+        }
+
+        .title {
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .title .meta small {
+            text-align: left;
+        }
+    }
 </style>

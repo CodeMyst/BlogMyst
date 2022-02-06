@@ -92,4 +92,14 @@
         margin-top: -1rem;
         margin-bottom: 1rem;
     }
+
+    @media screen and (max-width: 660px) {
+        nav {
+            flex-direction: column;
+        }
+
+        nav ul {
+            flex-direction: column;
+        }
+    }
 </style>

@@ -29,51 +29,45 @@ public class JasperReportsController {
         this.userRepository = userRepository;
     }
 
+    enum ReportType {
+        POSTS,
+        USERS
+    }
+
     @GetMapping("/posts")
     @PreAuthorize(RoleConstants.ADMIN)
     public void getPostsReport(@RequestParam String from, @RequestParam String to, HttpServletResponse res) throws Exception {
-        LocalDate dateFrom = LocalDate.parse(from);
-        LocalDate dateTo = LocalDate.parse(to);
-
-        Timestamp tsFrom = Timestamp.valueOf(dateFrom.atStartOfDay());
-        Timestamp tsTo = Timestamp.valueOf(dateTo.atTime(23, 59));
-
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(postRepository.findAllByCreatedAtBetween(tsFrom, tsTo, Sort.by(Sort.Direction.DESC, "createdAt")), false);
-
-        try (InputStream is = this.getClass().getResourceAsStream("/jasper-reports/BlogPosts.jrxml")) {
-            JasperReport report = JasperCompileManager.compileReport(is);
-
-            Map<String, Object> params = new HashMap<>();
-            params.put("from", dateFrom);
-            params.put("to", dateTo);
-
-            JasperPrint print = JasperFillManager.fillReport(report, params, dataSource);
-
-            res.setContentType("application/pdf");
-
-            JasperExportManager.exportReportToPdfStream(print, res.getOutputStream());
-        }
+        generateReport(ReportType.POSTS, from, to, "BlogPosts.jrxml", res);
     }
 
     @GetMapping("/users")
     @PreAuthorize(RoleConstants.ADMIN)
     public void getUsersReport(@RequestParam String from, @RequestParam String to, HttpServletResponse res) throws Exception {
+        generateReport(ReportType.USERS, from, to, "Users.jrxml", res);
+    }
+
+    private void generateReport(ReportType type, String from, String to, String report, HttpServletResponse res) throws Exception {
         LocalDate dateFrom = LocalDate.parse(from);
         LocalDate dateTo = LocalDate.parse(to);
 
         Timestamp tsFrom = Timestamp.valueOf(dateFrom.atStartOfDay());
         Timestamp tsTo = Timestamp.valueOf(dateTo.atTime(23, 59));
 
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(userRepository.findAllByCreatedAtBetween(tsFrom, tsTo, Sort.by(Sort.Direction.DESC, "createdAt")), false);
+        Collection<?> collection = switch (type) {
+            case POSTS -> postRepository.findAllByCreatedAtBetween(tsFrom, tsTo, Sort.by(Sort.Direction.DESC, "createdAt"));
+            case USERS -> userRepository.findAllByCreatedAtBetween(tsFrom, tsTo, Sort.by(Sort.Direction.DESC, "createdAt"));
+        };
 
-        try (InputStream is = this.getClass().getResourceAsStream("/jasper-reports/Users.jrxml")) {
-            JasperReport report = JasperCompileManager.compileReport(is);
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(collection, false);
+
+        try (InputStream is = this.getClass().getResourceAsStream("/jasper-reports/" + report)) {
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
 
             Map<String, Object> params = new HashMap<>();
             params.put("from", dateFrom);
             params.put("to", dateTo);
 
-            JasperPrint print = JasperFillManager.fillReport(report, params, dataSource);
+            JasperPrint print = JasperFillManager.fillReport(jasperReport, params, dataSource);
 
             res.setContentType("application/pdf");
 

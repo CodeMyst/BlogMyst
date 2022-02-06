@@ -59,7 +59,7 @@ public class BlogController {
         blog.setName(createInfo.getName());
         blog.setUrl(url);
 
-        return new ResponseEntity<>(blogRepository.save(blog), HttpStatus.OK);
+        return ResponseEntity.ok(blogRepository.save(blog));
     }
 
     @GetMapping("/{author}/{url}")
@@ -70,7 +70,7 @@ public class BlogController {
             return ResponseEntity.notFound().build();
         }
 
-        return new ResponseEntity<>(blog.get(), HttpStatus.OK);
+        return ResponseEntity.ok(blog.get());
     }
 
     @PatchMapping("/{author}/{url}")
@@ -91,7 +91,7 @@ public class BlogController {
         Optional<Blog> blog = blogRepository.findByUrlAndAuthorUsername(url, author);
 
         if (blog.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
 
         Blog newBlog = new Blog();
@@ -138,7 +138,7 @@ public class BlogController {
         Optional<Blog> blog = blogRepository.findByUrlAndAuthorUsername(url, author);
 
         if (blog.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
 
         if (postRepository.existsByUrlAndBlog(postUrl, blog.get())) {
